@@ -1,3 +1,5 @@
+https://sz-count-days.vercel.app/
+
 count days since or until a given date. can add multiple dates.
 
 🛠️ solid, typescript
