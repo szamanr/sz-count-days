@@ -4,6 +4,8 @@ import { Input } from "common/Input.tsx";
 import { Button } from "common/Button.tsx";
 import { createForm, SubmitHandler, zodForm } from "@modular-forms/solid";
 import { z } from "zod";
+import { SavedDate } from "./types";
+import { isMatch } from "date-fns";
 
 const schema = z.object({
   date: z
@@ -14,13 +16,20 @@ const schema = z.object({
 
 type DateForm = z.infer<typeof schema>;
 
-export const AddDate: Component = () => {
+type Props = {
+  addDate: (date: SavedDate) => void;
+};
+
+export const AddDate: Component<Props> = (props) => {
   const [_, { Form, Field }] = createForm<DateForm>({
     validate: zodForm(schema),
   });
 
-  const addDate: SubmitHandler<DateForm> = (form) => {
-    console.debug(form.name, form.date);
+  const handleSubmit: SubmitHandler<DateForm> = (form) => {
+    const isValid = isMatch(form.date, "yyyy-MM-dd");
+    if (!isValid) throw new Error("Invalid date");
+
+    props.addDate({ date: form.date, name: form.name });
   };
 
   return (
@@ -29,7 +38,7 @@ export const AddDate: Component = () => {
       <Popover.Positioner>
         <Popover.Content class="min-w-96 rounded bg-stone-600 p-4">
           <Popover.Title>Pick a date</Popover.Title>
-          <Form onSubmit={addDate}>
+          <Form onSubmit={handleSubmit}>
             <Popover.Description class="space-y-2 py-2">
               <Field name="name">
                 {(field, props) => (
