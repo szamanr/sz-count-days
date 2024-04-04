@@ -4,22 +4,10 @@ import { Day } from "./Day";
 import { AddDate } from "./AddDate";
 
 export const DaysTracker = () => {
-  const dates: SavedDate[] = [
-    {
-      date: "2024-01-13",
-      name: "trip start",
-    },
-    {
-      date: "2023-10-15",
-    },
-    {
-      date: new Date().toString(),
-    },
-    {
-      date: "2024-04-07",
-      name: "local elections",
-    },
-  ];
+  const dates: SavedDate[] = JSON.parse(
+    window.localStorage.getItem("savedDates") ?? "[]",
+  );
+
   const fallback = <p>Add a date below</p>;
 
   return (
