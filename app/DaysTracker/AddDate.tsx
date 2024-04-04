@@ -10,7 +10,7 @@ import { isMatch } from "date-fns";
 const schema = z.object({
   date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must follow the format: 2012-08-06"),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must follow the format: 2023-10-15"),
   name: z.string().optional(),
 });
 
