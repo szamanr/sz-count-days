@@ -1,37 +1,52 @@
-import { For } from "solid-js";
+import { createSignal, For } from "solid-js";
 import { SavedDate } from "./types";
 import { Day } from "./Day";
+import { AddDate } from "./AddDate";
+import { Button } from "common/Button";
+import { without } from "lodash";
+import { Icon } from "common/Icon";
 
 export const DaysTracker = () => {
-  const dates: SavedDate[] = [
-    {
-      date: "2024-01-13",
-      name: "trip start",
-    },
-    {
-      date: "2023-10-15",
-    },
-    {
-      date: new Date().toString(),
-    },
-    {
-      date: "2024-04-07",
-      name: "local elections",
-    },
-  ];
-  const fallback = <p>Add a date below</p>;
+  const localStorageDates: SavedDate[] = JSON.parse(
+    window.localStorage.getItem("savedDates") ?? "[]",
+  );
+  const [dates, setDates] = createSignal(localStorageDates);
+
+  const addDate = (date: SavedDate) => {
+    const newDates = [...dates(), date];
+    setDates(newDates);
+    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
+  };
+
+  const removeDate = (date: SavedDate) => {
+    const newDates = without([...dates()], date);
+    setDates(newDates);
+    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
+  };
+
+  const fallback = <p class="text-gray-500">Add a date below</p>;
 
   return (
-    <main class="w-full flex justify-center p-8">
+    <main class="flex w-full flex-col items-center space-y-4 p-8">
       <ul class="space-y-2">
-        <For each={dates} fallback={fallback}>
+        <For each={dates()} fallback={fallback}>
           {(date) => (
             <li>
-              <Day date={date.date} name={date.name} />
+              <div class="group flex items-center space-x-1">
+                <Button
+                  class="invisible text-red-500 hover:text-red-800 group-hover:visible"
+                  onClick={removeDate.bind(null, date)}
+                  variant="negative"
+                >
+                  <Icon name="close" size="xl" />
+                </Button>
+                <Day date={date.date} name={date.name} />
+              </div>
             </li>
           )}
         </For>
       </ul>
+      <AddDate addDate={addDate} />
     </main>
   );
 };
