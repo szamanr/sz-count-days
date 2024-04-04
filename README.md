@@ -6,6 +6,9 @@ count days since or until a given date. can add multiple dates.
 
 📁 keeps the dates in local storage
 
+![sz-count-days screen](https://github.com/szamanr/sz-count-days/assets/2622838/48cc4eb6-a893-49c4-a465-3930b331faa1)
+
+
 use cases:
 - count down to an important event
 - keep track of days already used on your visa
