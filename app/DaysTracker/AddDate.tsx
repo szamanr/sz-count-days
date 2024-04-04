@@ -2,11 +2,18 @@ import { Component } from "solid-js";
 import { Popover } from "@ark-ui/solid";
 import { Input } from "common/Input.tsx";
 import { Button } from "common/Button.tsx";
+import { createForm, SubmitHandler } from "@modular-forms/solid";
+
+type DateForm = {
+  name?: string;
+  date: string;
+};
 
 export const AddDate: Component = () => {
-  const addDate = (e: SubmitEvent) => {
-    e.preventDefault();
-    console.debug(e);
+  const [dateForm, { Form, Field, FieldArray }] = createForm<DateForm>();
+
+  const addDate: SubmitHandler<DateForm> = (form) => {
+    console.debug(form.name, form.date);
   };
 
   return (
@@ -15,27 +22,35 @@ export const AddDate: Component = () => {
       <Popover.Positioner>
         <Popover.Content class="min-w-64 rounded bg-stone-600 p-4">
           <Popover.Title>Pick a date</Popover.Title>
-          <form onSubmit={addDate}>
+          <Form onSubmit={addDate}>
             <Popover.Description class="space-y-2 py-2">
               <div class="grid grid-cols-3">
-                <Input
-                  outerClass="col-span-2"
-                  name="name"
-                  type="text"
-                  label="Name"
-                />
+                <Field name="name">
+                  {(_, props) => (
+                    <Input
+                      outerClass="col-span-2"
+                      type="text"
+                      label="Name"
+                      {...props}
+                    />
+                  )}
+                </Field>
               </div>
               <div class="grid grid-cols-3">
-                <Input
-                  outerClass="col-span-2"
-                  name="date"
-                  type="date"
-                  label="Date"
-                />
+                <Field name="date">
+                  {(_, props) => (
+                    <Input
+                      outerClass="col-span-2"
+                      type="date"
+                      label="Date"
+                      {...props}
+                    />
+                  )}
+                </Field>
               </div>
               <Button type="submit">Add</Button>
             </Popover.Description>
-          </form>
+          </Form>
         </Popover.Content>
       </Popover.Positioner>
     </Popover.Root>
