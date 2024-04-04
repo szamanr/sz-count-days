@@ -21,7 +21,7 @@ type Props = {
 };
 
 export const AddDate: Component<Props> = (props) => {
-  const [_, { Form, Field }] = createForm<DateForm>({
+  const [dateForm, { Form, Field }] = createForm<DateForm>({
     validate: zodForm(schema),
   });
 
@@ -30,6 +30,7 @@ export const AddDate: Component<Props> = (props) => {
     if (!isValid) throw new Error("Invalid date");
 
     props.addDate({ date: form.date, name: form.name });
+    dateForm.element?.reset();
   };
 
   return (
