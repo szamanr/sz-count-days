@@ -16,6 +16,7 @@
     "date-fns": "^3.6.0",
     "eslint": "^8.57.0",
     "lodash": "^4.17.21",
+    "material-symbols": "^0.17.1",
     "postcss": "^8.4.38",
     "prettier": "^3.2.5",
     "solid-js": "^1.8.15",
