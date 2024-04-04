@@ -1,6 +1,7 @@
 import { For } from "solid-js";
 import { SavedDate } from "./types";
 import { Day } from "./Day";
+import { AddDate } from "./AddDate";
 
 export const DaysTracker = () => {
   const dates: SavedDate[] = [
@@ -22,7 +23,7 @@ export const DaysTracker = () => {
   const fallback = <p>Add a date below</p>;
 
   return (
-    <main class="w-full flex justify-center p-8">
+    <main class="flex w-full flex-col items-center space-y-4 p-8">
       <ul class="space-y-2">
         <For each={dates} fallback={fallback}>
           {(date) => (
@@ -32,6 +33,7 @@ export const DaysTracker = () => {
           )}
         </For>
       </ul>
+      <AddDate />
     </main>
   );
 };
