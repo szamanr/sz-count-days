@@ -2,7 +2,7 @@ import { DaysTracker } from "./DaysTracker/DaysTracker";
 
 const App = () => {
   return (
-    <div class="bg-gray-800 text-white w-full min-h-screen">
+    <div class="min-h-screen w-full bg-gray-800 text-white">
       <DaysTracker />
     </div>
   );
