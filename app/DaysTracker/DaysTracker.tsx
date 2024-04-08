@@ -70,29 +70,66 @@ export const DaysTracker = () => {
     toast("URL copied to clipboard.");
   };
 
+  const moveDate = (date: SavedDate, offset: 1 | -1) => {
+    let newDates = [...dates()];
+    const index = newDates.indexOf(date);
+    if (index < 0 || index + offset < 0 || index + offset >= newDates.length) {
+      return;
+    }
+
+    newDates = [...newDates.slice(0, index), ...newDates.slice(index + 1)];
+    newDates = [
+      ...newDates.slice(0, index + offset),
+      date,
+      ...newDates.slice(index + offset),
+    ];
+    setDates(newDates);
+    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
+  };
+
   const fallback = <p class="text-gray-500">Add a date below</p>;
 
   return (
     <main class="flex w-full flex-col items-center space-y-4 p-8">
       <ul class="space-y-2">
         <For each={dates()} fallback={fallback}>
-          {(date) => (
+          {(date, index) => (
             <li>
               <div class="group flex items-center space-x-1">
-                <Button
-                  class="invisible text-teal-400 hover:text-teal-800 group-hover:visible"
-                  onClick={shareDate.bind(null, date)}
-                  variant="negative"
-                >
-                  <Icon name="share" size="xl" />
-                </Button>
-                <Button
-                  class="invisible text-red-500 hover:text-red-800 group-hover:visible"
-                  onClick={removeDate.bind(null, date)}
-                  variant="negative"
-                >
-                  <Icon name="close" size="xl" />
-                </Button>
+                <div class="flex min-w-32 justify-end">
+                  <Show when={index() > 0}>
+                    <Button
+                      class="invisible text-teal-200 hover:text-teal-800 group-hover:visible"
+                      onClick={moveDate.bind(null, date, -1)}
+                      variant="negative"
+                    >
+                      <Icon name="arrow_upward" size="xl" />
+                    </Button>
+                  </Show>
+                  <Show when={index() < dates().length - 1}>
+                    <Button
+                      class="invisible text-teal-200 hover:text-teal-800 group-hover:visible"
+                      onClick={moveDate.bind(null, date, 1)}
+                      variant="negative"
+                    >
+                      <Icon name="arrow_downward" size="xl" />
+                    </Button>
+                  </Show>
+                  <Button
+                    class="invisible text-teal-400 hover:text-teal-800 group-hover:visible"
+                    onClick={shareDate.bind(null, date)}
+                    variant="negative"
+                  >
+                    <Icon name="share" size="xl" />
+                  </Button>
+                  <Button
+                    class="invisible text-red-500 hover:text-red-800 group-hover:visible"
+                    onClick={removeDate.bind(null, date)}
+                    variant="negative"
+                  >
+                    <Icon name="close" size="xl" />
+                  </Button>
+                </div>
                 <Day date={date.date} name={date.name} />
               </div>
             </li>
