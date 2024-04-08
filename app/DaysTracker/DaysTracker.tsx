@@ -1,4 +1,4 @@
-import { createSignal, For } from "solid-js";
+import { createSignal, For, Show } from "solid-js";
 import { SavedDate } from "./types";
 import { Day } from "./Day";
 import { AddDate } from "./AddDate";
@@ -57,6 +57,17 @@ export const DaysTracker = () => {
     console.log("URL copied to clipboard.");
   };
 
+  const shareAllDates = async () => {
+    const newSearchParams = new URLSearchParams();
+
+    dates().forEach((date) => {
+      newSearchParams.append("date", [date.date, date.name].join(" ").trim());
+    });
+    history.pushState(null, "", `/?${newSearchParams.toString()}`);
+    await navigator.clipboard.writeText(location.href);
+    console.log("URL copied to clipboard.");
+  };
+
   const fallback = <p class="text-gray-500">Add a date below</p>;
 
   return (
@@ -87,6 +98,16 @@ export const DaysTracker = () => {
         </For>
       </ul>
       <AddDate addDate={addDate} />
+      <Show when={dates().length > 1}>
+        <Button onClick={shareAllDates} variant="negative">
+          <Icon
+            class="text-teal-400 hover:text-teal-800"
+            name="share"
+            size="xl"
+          />
+          Share all
+        </Button>
+      </Show>
     </main>
   );
 };
