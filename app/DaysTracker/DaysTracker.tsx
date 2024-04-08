@@ -48,6 +48,15 @@ export const DaysTracker = () => {
     window.localStorage.setItem("savedDates", JSON.stringify(newDates));
   };
 
+  const shareDate = async (date: SavedDate) => {
+    const newSearchParams = new URLSearchParams({
+      date: [date.date, date.name].join(" ").trim(),
+    });
+    history.pushState(null, "", `/?${newSearchParams.toString()}`);
+    await navigator.clipboard.writeText(location.href);
+    console.log("URL copied to clipboard.");
+  };
+
   const fallback = <p class="text-gray-500">Add a date below</p>;
 
   return (
@@ -57,6 +66,13 @@ export const DaysTracker = () => {
           {(date) => (
             <li>
               <div class="group flex items-center space-x-1">
+                <Button
+                  class="invisible text-teal-400 hover:text-teal-800 group-hover:visible"
+                  onClick={shareDate.bind(null, date)}
+                  variant="negative"
+                >
+                  <Icon name="share" size="xl" />
+                </Button>
                 <Button
                   class="invisible text-red-500 hover:text-red-800 group-hover:visible"
                   onClick={removeDate.bind(null, date)}
