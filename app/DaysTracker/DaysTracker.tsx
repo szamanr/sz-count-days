@@ -3,9 +3,11 @@ import { SavedDate } from "./types";
 import { Day } from "./Day";
 import { AddDate } from "./AddDate";
 import { Button } from "common/Button";
+import { toast } from "common/toast";
 import { unionBy, without } from "lodash";
 import { Icon } from "common/Icon";
 import { isMatch } from "date-fns";
+import "toastify-js/src/toastify.css";
 
 const useQueryDates = () => {
   const searchParams = new URLSearchParams(document.location.search);
@@ -54,7 +56,7 @@ export const DaysTracker = () => {
     });
     history.pushState(null, "", `/?${newSearchParams.toString()}`);
     await navigator.clipboard.writeText(location.href);
-    console.log("URL copied to clipboard.");
+    toast("URL copied to clipboard.");
   };
 
   const shareAllDates = async () => {
@@ -65,7 +67,7 @@ export const DaysTracker = () => {
     });
     history.pushState(null, "", `/?${newSearchParams.toString()}`);
     await navigator.clipboard.writeText(location.href);
-    console.log("URL copied to clipboard.");
+    toast("URL copied to clipboard.");
   };
 
   const fallback = <p class="text-gray-500">Add a date below</p>;
