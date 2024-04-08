@@ -3,14 +3,38 @@ import { SavedDate } from "./types";
 import { Day } from "./Day";
 import { AddDate } from "./AddDate";
 import { Button } from "common/Button";
-import { without } from "lodash";
+import { unionBy, without } from "lodash";
 import { Icon } from "common/Icon";
+import { isMatch } from "date-fns";
+
+const useQueryDates = () => {
+  const searchParams = new URLSearchParams(document.location.search);
+  return searchParams
+    .getAll("date")
+    .map(
+      (date) =>
+        date.match(/(?<date>\d{4}-\d{2}-\d{2})( (?<name>.*))?/)
+          ?.groups as SavedDate,
+    )
+    .filter((date) => !!date)
+    .filter(({ date }) => isMatch(date, "yyyy-MM-dd"));
+};
 
 export const DaysTracker = () => {
+  const queryDates = useQueryDates();
+
   const localStorageDates: SavedDate[] = JSON.parse(
     window.localStorage.getItem("savedDates") ?? "[]",
   );
-  const [dates, setDates] = createSignal(localStorageDates);
+  const allDates = unionBy(queryDates, localStorageDates, ({ date, name }) =>
+    [date, name].join(","),
+  );
+  if (allDates.length !== localStorageDates.length) {
+    window.localStorage.setItem("savedDates", JSON.stringify(allDates));
+  }
+  history.replaceState(null, "", "/");
+
+  const [dates, setDates] = createSignal(allDates);
 
   const addDate = (date: SavedDate) => {
     const newDates = [...dates(), date];
