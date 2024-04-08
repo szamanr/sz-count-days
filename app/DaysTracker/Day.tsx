@@ -10,8 +10,12 @@ import { Strong } from "common/Strong";
 import { Show } from "solid-js";
 import { SavedDate } from "./types";
 
-export const Day = ({ date: dateProp, name }: SavedDate) => {
-  const date = format(dateProp, "yyyy-MM-dd");
+type Props = SavedDate & {
+  class?: string;
+};
+
+export const Day = (props: Props) => {
+  const date = format(props.date, "yyyy-MM-dd");
   const now = format(new Date(), "yyyy-MM-dd");
   const [firstDate, secondDate] = [date, now].sort(compareAsc);
 
@@ -31,19 +35,19 @@ export const Day = ({ date: dateProp, name }: SavedDate) => {
   if (difference === 0)
     return (
       <p>
-        <Strong>{name ?? pickedDateFormatted}</Strong>
+        <Strong>{props.name ?? pickedDateFormatted}</Strong>
         <span> is today!</span>
       </p>
     );
 
   if (difference < 0)
     return (
-      <p>
+      <p class={props.class}>
         <span>It's </span>
         <span>{formattedDifference}</span>
         <span> until </span>
-        <Show when={name} fallback={pickedDateFormatted}>
-          <Strong>{name}</Strong>
+        <Show when={props.name} fallback={pickedDateFormatted}>
+          <Strong>{props.name}</Strong>
           <span> ({pickedDateFormatted})</span>
         </Show>
       </p>
@@ -54,8 +58,8 @@ export const Day = ({ date: dateProp, name }: SavedDate) => {
       <span>It's been </span>
       <span>{formattedDifference}</span>
       <span> since </span>
-      <Show when={name} fallback={pickedDateFormatted}>
-        <Strong>{name}</Strong>
+      <Show when={props.name} fallback={pickedDateFormatted}>
+        <Strong>{props.name}</Strong>
         <span> ({pickedDateFormatted})</span>
       </Show>
     </p>
