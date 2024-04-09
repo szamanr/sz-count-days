@@ -1,12 +1,14 @@
-https://sz-count-days.vercel.app/
+https://sz-count-days.vercel.app
 
-count days since or until a given date. can add multiple dates.
+count days since or until a given date. supports multiple dates, as well as events with start and end date.
 
 🛠️ solid, typescript
+🧱 ark UI, date-fns, lodash, modular forms, toastify js
 
-📁 keeps the dates in local storage
+📁 stores the dates in local storage, possible to share via URL
 
-![sz-count-days screen](https://github.com/szamanr/sz-count-days/assets/2622838/48cc4eb6-a893-49c4-a465-3930b331faa1)
+![screenshot](https://github.com/szamanr/sz-count-days/assets/2622838/d2cb4234-4bf5-4962-8a5d-7ecfc3fbfcd4)
+
 
 
 use cases:
