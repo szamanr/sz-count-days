@@ -77,7 +77,7 @@ export const Menu: Component<Props> = (props) => {
         </Popover.Content>
       </Popover.Positioner>
       <div class="absolute bottom-0 right-0 flex flex-col items-end space-y-1 p-4">
-        <Popover.Trigger class="rounded border bg-teal-600 p-2 leading-none hover:bg-teal-400">
+        <Popover.Trigger class="rounded bg-teal-600 p-2 leading-none hover:bg-teal-400">
           <Icon class="" name="menu" size="2xl" />
         </Popover.Trigger>
       </div>
