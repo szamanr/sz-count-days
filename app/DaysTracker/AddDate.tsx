@@ -54,7 +54,9 @@ export const AddDate: Component<Props> = (props) => {
 
   return (
     <Popover.Root>
-      <Popover.Trigger class="w-full">Pick new date</Popover.Trigger>
+      <Popover.Trigger class="w-full font-semibold hover:text-teal-500">
+        Pick new date
+      </Popover.Trigger>
       <Popover.Positioner>
         <Popover.Content class="min-w-96 rounded bg-stone-600 p-4">
           <Popover.Title>Pick a date</Popover.Title>
