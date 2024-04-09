@@ -8,6 +8,7 @@ import { unionBy, without } from "lodash";
 import { Icon } from "common/Icon";
 import { isMatch } from "date-fns";
 import "toastify-js/src/toastify.css";
+import { ConfirmButton } from "common/ConfirmButton.tsx";
 
 const useQueryDates = () => {
   const searchParams = new URLSearchParams(document.location.search);
@@ -52,6 +53,11 @@ export const DaysTracker = () => {
     const newDates = without([...dates()], date);
     setDates(newDates);
     window.localStorage.setItem("savedDates", JSON.stringify(newDates));
+  };
+
+  const removeAllDates = () => {
+    setDates([]);
+    window.localStorage.removeItem("savedDates");
   };
 
   const shareDate = async (date: SavedDate) => {
@@ -159,6 +165,22 @@ export const DaysTracker = () => {
           </div>
           <span class="w-32">Share all</span>
         </Button>
+      </Show>
+      <Show when={dates().length}>
+        <ConfirmButton
+          class="flex items-center"
+          onClick={removeAllDates}
+          variant="negative"
+        >
+          <div class="flex w-16 justify-end">
+            <Icon
+              class="text-red-500 hover:text-red-800"
+              name="delete"
+              size="xl"
+            />
+          </div>
+          <span class="w-32">Delete all</span>
+        </ConfirmButton>
       </Show>
     </main>
   );
