@@ -3,6 +3,7 @@ https://sz-count-days.vercel.app
 count days since or until a given date. supports multiple dates, as well as events with start and end date.
 
 🛠️ solid, typescript
+
 🧱 ark UI, date-fns, lodash, modular forms, toastify js
 
 📁 stores the dates in local storage, possible to share via URL
