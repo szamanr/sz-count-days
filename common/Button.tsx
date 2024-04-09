@@ -21,10 +21,11 @@ export const Button: Component<Props> = (passedProps) => {
         "flex w-fit items-center gap-2 px-1 py-1",
         "text-left font-semibold",
         "rounded",
+        "disabled:cursor-not-allowed disabled:text-gray-500",
         {
-          "bg-teal-500 px-2 text-white hover:bg-teal-600":
+          "bg-teal-500 px-2 text-white hover:bg-teal-400":
             ownProps.variant === "base",
-          "bg-red-500 px-2 text-white hover:bg-red-600":
+          "bg-red-500 px-2 text-white hover:bg-red-400":
             ownProps.variant === "danger",
           "hover:text-teal-500": ownProps.variant === "negative",
         },
