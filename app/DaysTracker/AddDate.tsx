@@ -1,7 +1,7 @@
 import { Accessor, Component, Setter, Show } from "solid-js";
 import { Collapsible, Popover } from "@ark-ui/solid";
-import { Input } from "common/Input.tsx";
-import { Button } from "common/Button.tsx";
+import { Input } from "common/Input";
+import { Button } from "common/Button";
 import {
   createForm,
   reset,
@@ -11,7 +11,7 @@ import {
 import { z } from "zod";
 import { SavedDate } from "./types";
 import { isAfter, isMatch } from "date-fns";
-import { Icon } from "common/Icon.tsx";
+import { Icon } from "common/Icon";
 
 const schema = z.object({
   date: z

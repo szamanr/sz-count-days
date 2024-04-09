@@ -1,9 +1,9 @@
 import { Accessor, Setter, Show } from "solid-js";
-import { SavedDate } from "app/DaysTracker/types.ts";
+import { SavedDate } from "app/DaysTracker/types";
 import { without } from "lodash";
-import { toast } from "common/toast.ts";
-import { Button } from "common/Button.tsx";
-import { Icon } from "common/Icon.tsx";
+import { toast } from "common/toast";
+import { Button } from "common/Button";
+import { Icon } from "common/Icon";
 
 type Props = {
   date: SavedDate;

@@ -1,4 +1,4 @@
-import { SavedDate } from "app/DaysTracker/types.ts";
+import { SavedDate } from "app/DaysTracker/types";
 import { isMatch } from "date-fns";
 
 export const useQueryDates = () => {

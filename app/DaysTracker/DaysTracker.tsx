@@ -1,12 +1,12 @@
 import { createSignal, For } from "solid-js";
 import { SavedDate } from "./types";
-import { Day } from "./Day";
+import { Day } from "./Day/Day";
 import { unionBy } from "lodash";
 import "toastify-js/src/toastify.css";
-import { AddDate } from "app/DaysTracker/AddDate";
-import { Menu } from "app/DaysTracker/Menu";
-import { DayActions } from "app/DaysTracker/DayActions";
-import { useQueryDates } from "app/DaysTracker/useQueryDates";
+import { AddDate } from "./AddDate";
+import { Menu } from "./Menu";
+import { DayActions } from "./Day/DayActions";
+import { useQueryDates } from "./useQueryDates";
 
 export const DaysTracker = () => {
   const queryDates = useQueryDates();
