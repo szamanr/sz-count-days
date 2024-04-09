@@ -96,7 +96,7 @@ export const DaysTracker = () => {
           {(date, index) => (
             <li>
               <div class="group flex items-center space-x-1">
-                <div class="flex min-w-32 justify-end">
+                <div class="flex w-32 justify-end">
                   <Show when={index() > 0}>
                     <Button
                       class="invisible text-teal-200 hover:text-teal-800 group-hover:visible"
@@ -138,13 +138,19 @@ export const DaysTracker = () => {
       </ul>
       <AddDate addDate={addDate} />
       <Show when={dates().length > 1}>
-        <Button onClick={shareAllDates} variant="negative">
-          <Icon
-            class="text-teal-400 hover:text-teal-800"
-            name="share"
-            size="xl"
-          />
-          Share all
+        <Button
+          class="flex items-center"
+          onClick={shareAllDates}
+          variant="negative"
+        >
+          <div class="flex w-16 justify-end">
+            <Icon
+              class="text-teal-400 hover:text-teal-800"
+              name="share"
+              size="xl"
+            />
+          </div>
+          <span class="w-32">Share all</span>
         </Button>
       </Show>
     </main>
