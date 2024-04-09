@@ -2,7 +2,12 @@ import { Component, Show } from "solid-js";
 import { Collapsible, Popover } from "@ark-ui/solid";
 import { Input } from "common/Input.tsx";
 import { Button } from "common/Button.tsx";
-import { createForm, SubmitHandler, zodForm } from "@modular-forms/solid";
+import {
+  createForm,
+  reset,
+  SubmitHandler,
+  zodForm,
+} from "@modular-forms/solid";
 import { z } from "zod";
 import { SavedDate } from "./types";
 import { isAfter, isMatch } from "date-fns";
@@ -44,7 +49,7 @@ export const AddDate: Component<Props> = (props) => {
       endDate: endDate,
       name: form.name,
     });
-    dateForm.element?.reset();
+    reset(dateForm);
   };
 
   return (
@@ -58,7 +63,12 @@ export const AddDate: Component<Props> = (props) => {
               <Field name="name">
                 {(field, props) => (
                   <div class="flex w-full flex-col">
-                    <Input type="text" label="Name" {...props} />
+                    <Input
+                      type="text"
+                      label="Name"
+                      value={field.value ?? ""}
+                      {...props}
+                    />
                     <Show when={field.error}>
                       <span class="text-red-500">{field.error}</span>
                     </Show>
@@ -72,6 +82,7 @@ export const AddDate: Component<Props> = (props) => {
                       type="date"
                       label="Date"
                       required={true}
+                      value={field.value}
                       {...props}
                     />
                     <Show when={field.error}>
@@ -89,7 +100,12 @@ export const AddDate: Component<Props> = (props) => {
                     {(field, props) => (
                       <div class="flex w-full flex-col">
                         <label for="endDate">End date</label>
-                        <Input id="endDate" type="date" {...props} />
+                        <Input
+                          id="endDate"
+                          type="date"
+                          value={field.value}
+                          {...props}
+                        />
                         <p class="flex items-center space-x-1 text-sm text-gray-400">
                           <Icon name="info" size="sm" />
                           <span>Optional. Add to show event duration.</span>
