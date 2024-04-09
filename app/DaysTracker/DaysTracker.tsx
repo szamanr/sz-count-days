@@ -15,11 +15,13 @@ const useQueryDates = () => {
     .getAll("date")
     .map(
       (date) =>
-        date.match(/(?<date>\d{4}-\d{2}-\d{2})( (?<name>.*))?/)
-          ?.groups as SavedDate,
+        date.match(
+          /(?<date>\d{4}-\d{2}-\d{2})( (?<endDate>\d{4}-\d{2}-\d{2}))?( (?<name>.*))?/,
+        )?.groups as SavedDate,
     )
     .filter((date) => !!date)
-    .filter(({ date }) => isMatch(date, "yyyy-MM-dd"));
+    .filter(({ date }) => isMatch(date, "yyyy-MM-dd"))
+    .filter(({ endDate }) => !endDate || isMatch(endDate, "yyyy-MM-dd"));
 };
 
 export const DaysTracker = () => {
@@ -28,8 +30,10 @@ export const DaysTracker = () => {
   const localStorageDates: SavedDate[] = JSON.parse(
     window.localStorage.getItem("savedDates") ?? "[]",
   );
-  const allDates = unionBy(queryDates, localStorageDates, ({ date, name }) =>
-    [date, name].join(","),
+  const allDates = unionBy(
+    queryDates,
+    localStorageDates,
+    ({ date, endDate, name }) => [date, endDate, name].join(","),
   );
   if (allDates.length !== localStorageDates.length) {
     window.localStorage.setItem("savedDates", JSON.stringify(allDates));
@@ -52,7 +56,7 @@ export const DaysTracker = () => {
 
   const shareDate = async (date: SavedDate) => {
     const newSearchParams = new URLSearchParams({
-      date: [date.date, date.name].join(" ").trim(),
+      date: [date.date, date.endDate, date.name].filter((v) => !!v).join(" "),
     });
     history.pushState(null, "", `/?${newSearchParams.toString()}`);
     await navigator.clipboard.writeText(location.href);
@@ -63,7 +67,10 @@ export const DaysTracker = () => {
     const newSearchParams = new URLSearchParams();
 
     dates().forEach((date) => {
-      newSearchParams.append("date", [date.date, date.name].join(" ").trim());
+      newSearchParams.append(
+        "date",
+        [date.date, date.endDate, date.name].filter((v) => !!v).join(" "),
+      );
     });
     history.pushState(null, "", `/?${newSearchParams.toString()}`);
     await navigator.clipboard.writeText(location.href);
@@ -130,7 +137,7 @@ export const DaysTracker = () => {
                     <Icon name="close" size="xl" />
                   </Button>
                 </div>
-                <Day date={date.date} name={date.name} />
+                <Day date={date.date} endDate={date.endDate} name={date.name} />
               </div>
             </li>
           )}
