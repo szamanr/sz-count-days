@@ -2,26 +2,11 @@ import { createSignal, For } from "solid-js";
 import { SavedDate } from "./types";
 import { Day } from "./Day";
 import { unionBy } from "lodash";
-import { isMatch } from "date-fns";
 import "toastify-js/src/toastify.css";
-import { AddDate } from "app/DaysTracker/AddDate.tsx";
-import { Menu } from "app/DaysTracker/Menu.tsx";
-import { DayActions } from "app/DaysTracker/DayActions.tsx";
-
-const useQueryDates = () => {
-  const searchParams = new URLSearchParams(document.location.search);
-  return searchParams
-    .getAll("date")
-    .map(
-      (date) =>
-        date.match(
-          /(?<date>\d{4}-\d{2}-\d{2})( (?<endDate>\d{4}-\d{2}-\d{2}))?( (?<name>.*))?/,
-        )?.groups as SavedDate,
-    )
-    .filter((date) => !!date)
-    .filter(({ date }) => isMatch(date, "yyyy-MM-dd"))
-    .filter(({ endDate }) => !endDate || isMatch(endDate, "yyyy-MM-dd"));
-};
+import { AddDate } from "app/DaysTracker/AddDate";
+import { Menu } from "app/DaysTracker/Menu";
+import { DayActions } from "app/DaysTracker/DayActions";
+import { useQueryDates } from "app/DaysTracker/useQueryDates";
 
 export const DaysTracker = () => {
   const queryDates = useQueryDates();
