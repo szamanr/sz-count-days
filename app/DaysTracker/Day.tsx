@@ -26,18 +26,14 @@ type Props = SavedDate & {
 };
 
 export const Day = (props: Props) => {
-  const date = format(props.date, "yyyy-MM-dd");
+  const date = format(props.date, "dd MMM yyyy");
   const endDate =
     props.endDate && isAfter(props.endDate, props.date)
-      ? format(props.endDate, "yyyy-MM-dd")
+      ? format(props.endDate, "dd MMM yyyy")
       : undefined;
   const duration = endDate && diff(date, endDate);
 
   const now = format(new Date(), "yyyy-MM-dd");
-
-  const pickedDateFormatted = endDate
-    ? `${format(date, "dd MMM yyyy")} - ${format(endDate, "dd MMM yyyy")}, ${duration}`
-    : format(date, "dd MMM yyyy");
 
   if (isFuture(date)) {
     return (
@@ -45,23 +41,34 @@ export const Day = (props: Props) => {
         <span>It's </span>
         <span>{diff(now, date)}</span>
         <span> until </span>
-        <Show when={props.name} fallback={pickedDateFormatted}>
+        <Show when={props.name} fallback={date}>
           <Strong>{props.name}</Strong>
-          <span> ({pickedDateFormatted})</span>
+          <Show when={endDate} fallback={<span> ({date})</span>}>
+            <span>
+              {" "}
+              ({date} - {endDate}, {duration})
+            </span>
+          </Show>
         </Show>
       </p>
     );
   }
 
-  if ((endDate && isPast(endDate)) || (!endDate && isPast(date))) {
+  const past = (!!endDate && isPast(endDate)) || (!endDate && isPast(date));
+  if (past) {
     return (
       <p>
         <span>It's been </span>
         <span>{diff(endDate ?? date, now)}</span>
         <span> since </span>
-        <Show when={props.name} fallback={pickedDateFormatted}>
+        <Show when={props.name} fallback={endDate ?? date}>
           <Strong>{props.name}</Strong>
-          <span> ({pickedDateFormatted})</span>
+          <Show when={endDate} fallback={<span> ({date})</span>}>
+            <span>
+              {" "}
+              ({date} - {endDate}, {duration})
+            </span>
+          </Show>
         </Show>
       </p>
     );
@@ -73,7 +80,9 @@ export const Day = (props: Props) => {
         <span>It's been </span>
         <span>{diff(date, now)}</span>
         <span> since </span>
-        <Strong>{props.name ?? format(date, "dd MMM yyyy")}</Strong>
+        <Show when={props.name} fallback={date}>
+          <Strong>{props.name}</Strong>
+        </Show>
         <span>, </span>
         <span>{diff(now, endDate)}</span>
         <span> more to go!</span>
@@ -84,7 +93,7 @@ export const Day = (props: Props) => {
 
   return (
     <p>
-      <Strong>{props.name ?? pickedDateFormatted}</Strong>
+      <Strong>{props.name ?? date}</Strong>
       <span> is today!</span>
     </p>
   );
