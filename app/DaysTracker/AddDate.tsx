@@ -1,16 +1,29 @@
 import { Component, Show } from "solid-js";
-import { Popover } from "@ark-ui/solid";
+import { Collapsible, Popover } from "@ark-ui/solid";
 import { Input } from "common/Input.tsx";
 import { Button } from "common/Button.tsx";
-import { createForm, SubmitHandler, zodForm } from "@modular-forms/solid";
+import {
+  createForm,
+  reset,
+  SubmitHandler,
+  zodForm,
+} from "@modular-forms/solid";
 import { z } from "zod";
 import { SavedDate } from "./types";
-import { isMatch } from "date-fns";
+import { isAfter, isMatch } from "date-fns";
+import { Icon } from "common/Icon.tsx";
 
 const schema = z.object({
   date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must follow the format: 2023-10-15"),
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must follow the format: 2023-10-15")
+    .refine((input) => isMatch(input, "yyyy-MM-dd"), {
+      message: "Please provide a valid date in the format: 2023-10-15",
+    }),
+  endDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must follow the format: 2023-10-15")
+    .or(z.literal("")),
   name: z.string().optional(),
 });
 
@@ -26,11 +39,17 @@ export const AddDate: Component<Props> = (props) => {
   });
 
   const handleSubmit: SubmitHandler<DateForm> = (form) => {
-    const isValid = isMatch(form.date, "yyyy-MM-dd");
-    if (!isValid) throw new Error("Invalid date");
+    let endDate: string | undefined = form.endDate;
+    if (form.endDate && !isAfter(form.endDate, form.date)) {
+      endDate = undefined;
+    }
 
-    props.addDate({ date: form.date, name: form.name });
-    dateForm.element?.reset();
+    props.addDate({
+      date: form.date,
+      endDate: endDate,
+      name: form.name,
+    });
+    reset(dateForm);
   };
 
   return (
@@ -44,7 +63,12 @@ export const AddDate: Component<Props> = (props) => {
               <Field name="name">
                 {(field, props) => (
                   <div class="flex w-full flex-col">
-                    <Input type="text" label="Name" {...props} />
+                    <Input
+                      type="text"
+                      label="Name"
+                      value={field.value ?? ""}
+                      {...props}
+                    />
                     <Show when={field.error}>
                       <span class="text-red-500">{field.error}</span>
                     </Show>
@@ -58,6 +82,7 @@ export const AddDate: Component<Props> = (props) => {
                       type="date"
                       label="Date"
                       required={true}
+                      value={field.value}
                       {...props}
                     />
                     <Show when={field.error}>
@@ -66,6 +91,33 @@ export const AddDate: Component<Props> = (props) => {
                   </div>
                 )}
               </Field>
+              <Collapsible.Root>
+                <Collapsible.Trigger class="hover:text-teal-500">
+                  More options
+                </Collapsible.Trigger>
+                <Collapsible.Content>
+                  <Field name="endDate">
+                    {(field, props) => (
+                      <div class="flex w-full flex-col">
+                        <label for="endDate">End date</label>
+                        <Input
+                          id="endDate"
+                          type="date"
+                          value={field.value}
+                          {...props}
+                        />
+                        <p class="flex items-center space-x-1 text-sm text-gray-400">
+                          <Icon name="info" size="sm" />
+                          <span>Optional. Add to show event duration.</span>
+                        </p>
+                        <Show when={field.error}>
+                          <span class="text-red-500">{field.error}</span>
+                        </Show>
+                      </div>
+                    )}
+                  </Field>
+                </Collapsible.Content>
+              </Collapsible.Root>
               <Button type="submit">Add</Button>
             </Popover.Description>
           </Form>

@@ -1,28 +1,19 @@
 import {
-  compareAsc,
-  differenceInCalendarDays,
   format,
   formatDuration,
   intervalToDuration,
+  isAfter,
+  isFuture,
+  isPast,
 } from "date-fns";
 import { pick } from "lodash";
 import { Strong } from "common/Strong";
 import { Show } from "solid-js";
 import { SavedDate } from "./types";
 
-type Props = SavedDate & {
-  class?: string;
-};
-
-export const Day = (props: Props) => {
-  const date = format(props.date, "yyyy-MM-dd");
-  const now = format(new Date(), "yyyy-MM-dd");
-  const [firstDate, secondDate] = [date, now].sort(compareAsc);
-
-  const difference = differenceInCalendarDays(now, date);
-
-  const formattedDifference = formatDuration(
-    pick(intervalToDuration({ end: secondDate, start: firstDate }), [
+const diff = (start: string, end: string) =>
+  formatDuration(
+    pick(intervalToDuration({ end, start }), [
       "years",
       "months",
       "weeks",
@@ -30,38 +21,80 @@ export const Day = (props: Props) => {
     ]),
   );
 
-  const pickedDateFormatted = format(date, "dd MMM yyyy");
+type Props = SavedDate & {
+  class?: string;
+};
 
-  if (difference === 0)
-    return (
-      <p>
-        <Strong>{props.name ?? pickedDateFormatted}</Strong>
-        <span> is today!</span>
-      </p>
-    );
+export const Day = (props: Props) => {
+  const date = format(props.date, "dd MMM yyyy");
+  const endDate =
+    props.endDate && isAfter(props.endDate, props.date)
+      ? format(props.endDate, "dd MMM yyyy")
+      : undefined;
+  const duration = endDate && diff(date, endDate);
 
-  if (difference < 0)
+  const now = format(new Date(), "yyyy-MM-dd");
+
+  if (isFuture(date)) {
     return (
       <p class={props.class}>
         <span>It's </span>
-        <span>{formattedDifference}</span>
+        <span>{diff(now, date)}</span>
         <span> until </span>
-        <Show when={props.name} fallback={pickedDateFormatted}>
+        <Show when={props.name} fallback={date}>
           <Strong>{props.name}</Strong>
-          <span> ({pickedDateFormatted})</span>
+          <Show when={endDate} fallback={<span> ({date})</span>}>
+            <span>
+              {" "}
+              ({date} - {endDate}, {duration})
+            </span>
+          </Show>
         </Show>
       </p>
     );
+  }
+
+  const past = (!!endDate && isPast(endDate)) || (!endDate && isPast(date));
+  if (past) {
+    return (
+      <p>
+        <span>It's been </span>
+        <span>{diff(endDate ?? date, now)}</span>
+        <span> since </span>
+        <Show when={props.name} fallback={endDate ?? date}>
+          <Strong>{props.name}</Strong>
+          <Show when={endDate} fallback={<span> ({date})</span>}>
+            <span>
+              {" "}
+              ({date} - {endDate}, {duration})
+            </span>
+          </Show>
+        </Show>
+      </p>
+    );
+  }
+
+  if (endDate) {
+    return (
+      <p>
+        <span>It's been </span>
+        <span>{diff(date, now)}</span>
+        <span> since </span>
+        <Show when={props.name} fallback={date}>
+          <Strong>{props.name}</Strong>
+        </Show>
+        <span>, </span>
+        <span>{diff(now, endDate)}</span>
+        <span> more to go!</span>
+        <span> ({format(endDate, "dd MMM yyyy")})</span>
+      </p>
+    );
+  }
 
   return (
     <p>
-      <span>It's been </span>
-      <span>{formattedDifference}</span>
-      <span> since </span>
-      <Show when={props.name} fallback={pickedDateFormatted}>
-        <Strong>{props.name}</Strong>
-        <span> ({pickedDateFormatted})</span>
-      </Show>
+      <Strong>{props.name ?? date}</Strong>
+      <span> is today!</span>
     </p>
   );
 };
