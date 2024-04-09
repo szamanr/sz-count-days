@@ -9,7 +9,7 @@ import {
 import { pick } from "lodash";
 import { Strong } from "common/Strong";
 import { Show } from "solid-js";
-import { SavedDate } from "./types";
+import { SavedDate } from "app/DaysTracker/types";
 
 const diff = (start: string, end: string) =>
   formatDuration(
