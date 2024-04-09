@@ -40,38 +40,40 @@ export const Menu: Component<Props> = (props) => {
       }}
     >
       <Popover.Positioner>
-        <Popover.Content class="flex w-64 flex-col space-y-4 rounded bg-gray-600 py-4">
-          <Button
-            class="flex w-full items-center justify-center disabled:text-gray-400"
-            disabled={props.dates().length < 1}
-            onClick={shareAllDates}
-            variant="negative"
-          >
-            <Icon
-              class="text-teal-400 hover:text-teal-800"
-              name="share"
-              size="xl"
-            />
-            <span>Share all</span>
-          </Button>
-          <ConfirmButton
-            class="flex w-full items-center justify-center disabled:text-gray-400"
-            disabled={props.dates().length < 1}
-            onClick={removeAllDates}
-            messages={{
-              prompt: null,
-              no: "Cancel",
-              yes: "Delete",
-            }}
-            variant="negative"
-          >
-            <Icon
-              class="text-red-500 hover:text-red-800"
-              name="delete"
-              size="xl"
-            />
-            <span>Delete all</span>
-          </ConfirmButton>
+        <Popover.Content>
+          <div class="flex w-64 flex-col space-y-4 rounded bg-gray-600 py-4">
+            <Button
+              class="flex w-full items-center justify-center disabled:text-gray-400"
+              disabled={props.dates().length < 1}
+              onClick={shareAllDates}
+              variant="negative"
+            >
+              <Icon
+                class="text-teal-400 hover:text-teal-800"
+                name="share"
+                size="xl"
+              />
+              <span>Share all</span>
+            </Button>
+            <ConfirmButton
+              class="flex w-full items-center justify-center disabled:text-gray-400"
+              disabled={props.dates().length < 1}
+              onClick={removeAllDates}
+              messages={{
+                prompt: null,
+                no: "Cancel",
+                yes: "Delete",
+              }}
+              variant="negative"
+            >
+              <Icon
+                class="text-red-500 hover:text-red-800"
+                name="delete"
+                size="xl"
+              />
+              <span>Delete all</span>
+            </ConfirmButton>
+          </div>
         </Popover.Content>
       </Popover.Positioner>
       <div class="absolute bottom-0 right-0 flex flex-col items-end space-y-1 p-4">
