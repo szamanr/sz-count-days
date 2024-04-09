@@ -1,14 +1,14 @@
 import { createSignal, For, Show } from "solid-js";
 import { SavedDate } from "./types";
 import { Day } from "./Day";
-import { AddDate } from "./AddDate";
 import { Button } from "common/Button";
 import { toast } from "common/toast";
 import { unionBy, without } from "lodash";
 import { Icon } from "common/Icon";
 import { isMatch } from "date-fns";
 import "toastify-js/src/toastify.css";
-import { ConfirmButton } from "common/ConfirmButton.tsx";
+import { AddDate } from "app/DaysTracker/AddDate.tsx";
+import { Menu } from "app/DaysTracker/Menu.tsx";
 
 const useQueryDates = () => {
   const searchParams = new URLSearchParams(document.location.search);
@@ -43,40 +43,15 @@ export const DaysTracker = () => {
 
   const [dates, setDates] = createSignal(allDates);
 
-  const addDate = (date: SavedDate) => {
-    const newDates = [...dates(), date];
-    setDates(newDates);
-    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
-  };
-
   const removeDate = (date: SavedDate) => {
     const newDates = without([...dates()], date);
     setDates(newDates);
     window.localStorage.setItem("savedDates", JSON.stringify(newDates));
   };
 
-  const removeAllDates = () => {
-    setDates([]);
-    window.localStorage.removeItem("savedDates");
-  };
-
   const shareDate = async (date: SavedDate) => {
     const newSearchParams = new URLSearchParams({
       date: [date.date, date.endDate, date.name].filter((v) => !!v).join(" "),
-    });
-    history.pushState(null, "", `/?${newSearchParams.toString()}`);
-    await navigator.clipboard.writeText(location.href);
-    toast("URL copied to clipboard.");
-  };
-
-  const shareAllDates = async () => {
-    const newSearchParams = new URLSearchParams();
-
-    dates().forEach((date) => {
-      newSearchParams.append(
-        "date",
-        [date.date, date.endDate, date.name].filter((v) => !!v).join(" "),
-      );
     });
     history.pushState(null, "", `/?${newSearchParams.toString()}`);
     await navigator.clipboard.writeText(location.href);
@@ -112,7 +87,7 @@ export const DaysTracker = () => {
                 <div class="flex w-32 justify-end">
                   <Show when={index() > 0}>
                     <Button
-                      class="invisible text-teal-200 hover:text-teal-800 group-hover:visible"
+                      class="invisible text-teal-500 hover:text-teal-400 group-hover:visible"
                       onClick={moveDate.bind(null, date, -1)}
                       variant="negative"
                     >
@@ -121,7 +96,7 @@ export const DaysTracker = () => {
                   </Show>
                   <Show when={index() < dates().length - 1}>
                     <Button
-                      class="invisible text-teal-200 hover:text-teal-800 group-hover:visible"
+                      class="invisible text-teal-500 hover:text-teal-400 group-hover:visible"
                       onClick={moveDate.bind(null, date, 1)}
                       variant="negative"
                     >
@@ -129,14 +104,14 @@ export const DaysTracker = () => {
                     </Button>
                   </Show>
                   <Button
-                    class="invisible text-teal-400 hover:text-teal-800 group-hover:visible"
+                    class="invisible text-teal-500 hover:text-teal-400 group-hover:visible"
                     onClick={shareDate.bind(null, date)}
                     variant="negative"
                   >
                     <Icon name="share" size="xl" />
                   </Button>
                   <Button
-                    class="invisible text-red-500 hover:text-red-800 group-hover:visible"
+                    class="invisible text-red-500 hover:text-red-400 group-hover:visible"
                     onClick={removeDate.bind(null, date)}
                     variant="negative"
                   >
@@ -149,39 +124,8 @@ export const DaysTracker = () => {
           )}
         </For>
       </ul>
-      <AddDate addDate={addDate} />
-      <Show when={dates().length > 1}>
-        <Button
-          class="flex items-center"
-          onClick={shareAllDates}
-          variant="negative"
-        >
-          <div class="flex w-16 justify-end">
-            <Icon
-              class="text-teal-400 hover:text-teal-800"
-              name="share"
-              size="xl"
-            />
-          </div>
-          <span class="w-32">Share all</span>
-        </Button>
-      </Show>
-      <Show when={dates().length}>
-        <ConfirmButton
-          class="flex items-center"
-          onClick={removeAllDates}
-          variant="negative"
-        >
-          <div class="flex w-16 justify-end">
-            <Icon
-              class="text-red-500 hover:text-red-800"
-              name="delete"
-              size="xl"
-            />
-          </div>
-          <span class="w-32">Delete all</span>
-        </ConfirmButton>
-      </Show>
+      <AddDate dates={dates} setDates={setDates} />
+      <Menu dates={dates} setDates={setDates} />
     </main>
   );
 };

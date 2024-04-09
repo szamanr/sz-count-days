@@ -1,4 +1,4 @@
-import { Component, Show } from "solid-js";
+import { Accessor, Component, Setter, Show } from "solid-js";
 import { Collapsible, Popover } from "@ark-ui/solid";
 import { Input } from "common/Input.tsx";
 import { Button } from "common/Button.tsx";
@@ -30,7 +30,8 @@ const schema = z.object({
 type DateForm = z.infer<typeof schema>;
 
 type Props = {
-  addDate: (date: SavedDate) => void;
+  dates: Accessor<SavedDate[]>;
+  setDates: Setter<SavedDate[]>;
 };
 
 export const AddDate: Component<Props> = (props) => {
@@ -44,21 +45,26 @@ export const AddDate: Component<Props> = (props) => {
       endDate = undefined;
     }
 
-    props.addDate({
-      date: form.date,
-      endDate: endDate,
-      name: form.name,
-    });
+    const newDates = [
+      ...props.dates(),
+      {
+        date: form.date,
+        endDate: endDate,
+        name: form.name,
+      },
+    ];
+    props.setDates(newDates);
+    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
     reset(dateForm);
   };
 
   return (
     <Popover.Root>
-      <Popover.Trigger class="w-full font-semibold hover:text-teal-500">
-        Pick new date
+      <Popover.Trigger class="flex rounded-full bg-teal-500 p-2 hover:bg-teal-400">
+        <Icon class="!font-semibold" name="add" size="2xl" />
       </Popover.Trigger>
       <Popover.Positioner>
-        <Popover.Content class="min-w-96 rounded bg-stone-600 p-4">
+        <Popover.Content class="min-w-96 rounded bg-gray-600 p-4">
           <Popover.Title>Pick a date</Popover.Title>
           <Form onSubmit={handleSubmit}>
             <Popover.Description class="space-y-2 py-2">

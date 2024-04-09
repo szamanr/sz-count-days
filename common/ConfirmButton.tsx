@@ -48,6 +48,7 @@ export const ConfirmButton: Component<Props> = (props) => {
           class={ownProps.class}
           formAction={ownProps.formAction}
           onClick={ownProps.onClick}
+          variant="danger"
         >
           {ownProps.messages?.yes ?? "Yes"}
         </Button>
@@ -56,7 +57,7 @@ export const ConfirmButton: Component<Props> = (props) => {
           onClick={() => setShowConfirm(false)}
           variant="negative"
         >
-          {ownProps.messages?.no ?? "No"}
+          {isUndefined(ownProps.messages?.no) ? "No" : ownProps.messages?.no}
         </Button>
       </div>
     </Show>
