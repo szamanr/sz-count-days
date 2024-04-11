@@ -102,7 +102,6 @@ it("can reorder dates", async () => {
   render(() => <DaysTracker />);
 
   let displayedDates = screen.getAllByTestId("dayContainer");
-  console.debug(displayedDates.map((d) => d.textContent));
   expect(displayedDates).toHaveLength(3);
   expect(displayedDates[0]).toHaveTextContent("date 1");
   expect(displayedDates[1]).toHaveTextContent("date 2");
@@ -129,4 +128,23 @@ it("can reorder dates", async () => {
   expect(displayedDates[0]).toHaveTextContent("date 2");
   expect(displayedDates[1]).toHaveTextContent("date 3");
   expect(displayedDates[2]).toHaveTextContent("date 1");
+});
+
+it("can remove all dates", async () => {
+  const dates = [
+    { date: "1024-01-01", name: "date 1" },
+    { date: "2024-01-01", name: "date 2" },
+    { date: "3024-01-01", name: "date 3" },
+  ];
+  localStorage.setItem("savedDates", JSON.stringify(dates));
+  render(() => <DaysTracker />);
+
+  let displayedDates = screen.getAllByTestId("dayContainer");
+  expect(displayedDates).toHaveLength(3);
+
+  await userEvent.click(screen.getByRole("button", { name: "menu" }));
+  await userEvent.click(screen.getByRole("button", { name: /Delete all/i }));
+  await userEvent.click(screen.getByRole("button", { name: "Delete" })); // confirm
+
+  expect(screen.queryByTestId("dayContainer")).not.toBeInTheDocument();
 });
