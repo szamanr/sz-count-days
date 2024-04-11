@@ -24,6 +24,7 @@ beforeEach(() => {
   cleanup();
   localStorage.removeItem("savedDates");
   userEvent.setup();
+  history.replaceState(null, "", "/");
 });
 
 it("can add date", async () => {
@@ -79,12 +80,7 @@ it("can share date", async () => {
   localStorage.setItem("savedDates", JSON.stringify([date]));
   render(() => <DaysTracker />);
 
-  const displayedDates = screen.getAllByTestId("dayContainer");
-  expect(displayedDates).toHaveLength(1);
-  const displayedDate = displayedDates[0];
-  expect(displayedDate).toHaveTextContent(
-    `year start (${format(date.date, "dd MMM yyyy")})`,
-  );
+  const displayedDate = screen.getByTestId("dayContainer");
 
   await userEvent.hover(displayedDate);
   await userEvent.click(
@@ -94,4 +90,43 @@ it("can share date", async () => {
   expect(await navigator.clipboard.readText()).toContain(
     "?date=2024-01-01+year+start",
   );
+});
+
+it("can reorder dates", async () => {
+  const dates = [
+    { date: "1024-01-01", name: "date 1" },
+    { date: "2024-01-01", name: "date 2" },
+    { date: "3024-01-01", name: "date 3" },
+  ];
+  localStorage.setItem("savedDates", JSON.stringify(dates));
+  render(() => <DaysTracker />);
+
+  let displayedDates = screen.getAllByTestId("dayContainer");
+  console.debug(displayedDates.map((d) => d.textContent));
+  expect(displayedDates).toHaveLength(3);
+  expect(displayedDates[0]).toHaveTextContent("date 1");
+  expect(displayedDates[1]).toHaveTextContent("date 2");
+  expect(displayedDates[2]).toHaveTextContent("date 3");
+
+  await userEvent.hover(displayedDates[0]);
+  await userEvent.click(
+    within(displayedDates[0]).getByRole("button", { name: "arrow_downward" }),
+  );
+
+  displayedDates = screen.getAllByTestId("dayContainer");
+  expect(displayedDates).toHaveLength(3);
+  expect(displayedDates[0]).toHaveTextContent("date 2");
+  expect(displayedDates[1]).toHaveTextContent("date 1");
+  expect(displayedDates[2]).toHaveTextContent("date 3");
+
+  await userEvent.hover(displayedDates[0]);
+  await userEvent.click(
+    within(displayedDates[2]).getByRole("button", { name: "arrow_upward" }),
+  );
+
+  displayedDates = screen.getAllByTestId("dayContainer");
+  expect(displayedDates).toHaveLength(3);
+  expect(displayedDates[0]).toHaveTextContent("date 2");
+  expect(displayedDates[1]).toHaveTextContent("date 3");
+  expect(displayedDates[2]).toHaveTextContent("date 1");
 });
