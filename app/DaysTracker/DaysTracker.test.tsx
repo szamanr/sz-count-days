@@ -73,3 +73,25 @@ it("can remove date", async () => {
 
   expect(screen.queryByTestId("dayContainer")).not.toBeInTheDocument();
 });
+
+it("can share date", async () => {
+  const date = { date: "2024-01-01", name: "year start" };
+  localStorage.setItem("savedDates", JSON.stringify([date]));
+  render(() => <DaysTracker />);
+
+  const displayedDates = screen.getAllByTestId("dayContainer");
+  expect(displayedDates).toHaveLength(1);
+  const displayedDate = displayedDates[0];
+  expect(displayedDate).toHaveTextContent(
+    `year start (${format(date.date, "dd MMM yyyy")})`,
+  );
+
+  await userEvent.hover(displayedDate);
+  await userEvent.click(
+    within(displayedDate).getByRole("button", { name: "share" }),
+  );
+  expect(location.href).toContain("?date=2024-01-01+year+start");
+  expect(await navigator.clipboard.readText()).toContain(
+    "?date=2024-01-01+year+start",
+  );
+});
