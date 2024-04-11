@@ -34,7 +34,10 @@ export const DaysTracker = () => {
         <For each={dates()} fallback={fallback}>
           {(date, index) => (
             <li>
-              <div class="group flex items-center space-x-1">
+              <div
+                class="group flex items-center space-x-1"
+                data-testid="dayContainer"
+              >
                 <div class="flex w-32 justify-end">
                   <DayActions
                     index={index}
