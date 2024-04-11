@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
 
@@ -11,5 +12,9 @@ export default defineConfig({
   },
   server: {
     port: 3000,
+  },
+  test: {
+    environment: "jsdom",
+    setupFiles: ["./vitest-setup.ts"],
   },
 });
