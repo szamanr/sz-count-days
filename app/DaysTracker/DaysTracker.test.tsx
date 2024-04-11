@@ -148,3 +148,21 @@ it("can remove all dates", async () => {
 
   expect(screen.queryByTestId("dayContainer")).not.toBeInTheDocument();
 });
+
+it("can share all dates", async () => {
+  const dates = [
+    { date: "1024-01-01", name: "date 1" },
+    { date: "2024-01-01", name: "date 2" },
+    { date: "3024-01-01", name: "date 3" },
+  ];
+  localStorage.setItem("savedDates", JSON.stringify(dates));
+  render(() => <DaysTracker />);
+
+  await userEvent.click(screen.getByRole("button", { name: "menu" }));
+  await userEvent.click(screen.getByRole("button", { name: /Share all/i }));
+
+  const searchQuery =
+    "?date=1024-01-01+date+1&date=2024-01-01+date+2&date=3024-01-01+date+3";
+  expect(location.href).toContain(searchQuery);
+  expect(await navigator.clipboard.readText()).toContain(searchQuery);
+});
