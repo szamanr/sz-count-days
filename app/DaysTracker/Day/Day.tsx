@@ -33,11 +33,11 @@ export const Day = (props: Props) => {
       : undefined;
   const duration = endDate && diff(date, endDate);
 
-  const now = format(new Date(), "yyyy-MM-dd");
+  const now = format(new Date(), "dd MMM yyyy");
 
   if (isFuture(date)) {
     return (
-      <p class={props.class}>
+      <p class={props.class} data-testid="day">
         <span>It's </span>
         <span>{diff(now, date)}</span>
         <span> until </span>
@@ -57,7 +57,7 @@ export const Day = (props: Props) => {
   const past = (!!endDate && isPast(endDate)) || (!endDate && isPast(date));
   if (past) {
     return (
-      <p>
+      <p class={props.class} data-testid="day">
         <span>It's been </span>
         <span>{diff(endDate ?? date, now)}</span>
         <span> since </span>
@@ -76,7 +76,7 @@ export const Day = (props: Props) => {
 
   if (endDate) {
     return (
-      <p>
+      <p class={props.class} data-testid="day">
         <span>It's been </span>
         <span>{diff(date, now)}</span>
         <span> since </span>
@@ -92,7 +92,7 @@ export const Day = (props: Props) => {
   }
 
   return (
-    <p>
+    <p class={props.class} data-testid="day">
       <Strong>{props.name ?? date}</Strong>
       <span> is today!</span>
     </p>
