@@ -53,7 +53,7 @@ export const DayActions = (props: Props) => {
           onClick={moveDate.bind(null, props.date, -1)}
           variant="negative"
         >
-          <Icon name="arrow_upward" size="xl" />
+          <Icon class="!text-2xl sm:!text-xl" name="arrow_upward" size="xl" />
         </Button>
       </Show>
       <Show when={props.index() < props.dates().length - 1}>
@@ -62,7 +62,7 @@ export const DayActions = (props: Props) => {
           onClick={moveDate.bind(null, props.date, 1)}
           variant="negative"
         >
-          <Icon name="arrow_downward" size="xl" />
+          <Icon class="!text-2xl sm:!text-xl" name="arrow_downward" size="xl" />
         </Button>
       </Show>
       <Button
@@ -70,14 +70,14 @@ export const DayActions = (props: Props) => {
         onClick={shareDate.bind(null, props.date)}
         variant="negative"
       >
-        <Icon name="share" size="xl" />
+        <Icon class="!text-2xl sm:!text-xl" name="share" size="xl" />
       </Button>
       <Button
         class="text-red-500 hover:text-red-400"
         onClick={removeDate.bind(null, props.date)}
         variant="negative"
       >
-        <Icon name="close" size="xl" />
+        <Icon class="!text-2xl sm:!text-xl" name="close" size="xl" />
       </Button>
     </>
   );
