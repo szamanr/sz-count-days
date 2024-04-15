@@ -49,7 +49,7 @@ export const DayActions = (props: Props) => {
     <>
       <Show when={props.index() > 0}>
         <Button
-          class="invisible text-teal-500 hover:text-teal-400 group-hover:visible"
+          class="text-teal-500 hover:text-teal-400"
           onClick={moveDate.bind(null, props.date, -1)}
           variant="negative"
         >
@@ -58,7 +58,7 @@ export const DayActions = (props: Props) => {
       </Show>
       <Show when={props.index() < props.dates().length - 1}>
         <Button
-          class="invisible text-teal-500 hover:text-teal-400 group-hover:visible"
+          class="text-teal-500 hover:text-teal-400"
           onClick={moveDate.bind(null, props.date, 1)}
           variant="negative"
         >
@@ -66,14 +66,14 @@ export const DayActions = (props: Props) => {
         </Button>
       </Show>
       <Button
-        class="invisible text-teal-500 hover:text-teal-400 group-hover:visible"
+        class="text-teal-500 hover:text-teal-400"
         onClick={shareDate.bind(null, props.date)}
         variant="negative"
       >
         <Icon name="share" size="xl" />
       </Button>
       <Button
-        class="invisible text-red-500 hover:text-red-400 group-hover:visible"
+        class="text-red-500 hover:text-red-400"
         onClick={removeDate.bind(null, props.date)}
         variant="negative"
       >
