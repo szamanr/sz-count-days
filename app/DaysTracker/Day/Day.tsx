@@ -16,7 +16,7 @@ const diff = (start: string, end: string, displayDurationInDays: boolean) => {
   if (displayDurationInDays)
     return `${differenceInCalendarDays(end, start)} days`;
   return formatDuration(
-    pick(intervalToDuration({ end, start }), [
+    pick(intervalToDuration({end, start}), [
       "years",
       "months",
       "weeks",
@@ -36,7 +36,6 @@ export const Day = (props: Props) => {
     props.endDate && isAfter(props.endDate, props.date)
       ? format(props.endDate, "dd MMM yyyy")
       : undefined;
-  const duration = endDate && diff(date, endDate, props.displayDurationInDays);
 
   const now = format(new Date(), "dd MMM yyyy");
 
@@ -49,10 +48,13 @@ export const Day = (props: Props) => {
         <Show when={props.name} fallback={date}>
           <Strong>{props.name}</Strong>
           <Show when={endDate} fallback={<span> ({date})</span>}>
-            <span>
-              {" "}
-              ({date} - {endDate}, {duration})
-            </span>
+            {(endDate) => (
+              <span>
+                {" "}
+                ({date} - {endDate()},{" "}
+                {diff(date, endDate(), props.displayDurationInDays)})
+              </span>
+            )}
           </Show>
         </Show>
       </p>
@@ -69,10 +71,12 @@ export const Day = (props: Props) => {
         <Show when={props.name} fallback={endDate ?? date}>
           <Strong>{props.name}</Strong>
           <Show when={endDate} fallback={<span> ({date})</span>}>
-            <span>
+            {(endDate) => (
+              <span>
               {" "}
-              ({date} - {endDate}, {duration})
+                ({date} - {endDate()}, {diff(date, endDate(), props.displayDurationInDays)}})
             </span>
+            )}
           </Show>
         </Show>
       </p>
