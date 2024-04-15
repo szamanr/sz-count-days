@@ -2,7 +2,7 @@ import { cleanup, render, screen, within } from "@solidjs/testing-library";
 import { DaysTracker } from "app/DaysTracker/DaysTracker";
 import { beforeEach, expect, it } from "vitest";
 import { userEvent } from "@testing-library/user-event";
-import { add, format } from "date-fns";
+import { add, differenceInDays, format } from "date-fns";
 
 const addDate = async ({ date, name }: { date: Date; name?: string }) => {
   await userEvent.click(screen.getByRole("button", { name: "add" }));
@@ -165,4 +165,24 @@ it("can share all dates", async () => {
     "?date=1024-01-01+date+1&date=2024-01-01+date+2&date=3024-01-01+date+3";
   expect(location.href).toContain(searchQuery);
   expect(await navigator.clipboard.readText()).toContain(searchQuery);
+});
+
+it("can toggle to display as days", async () => {
+  const date = add(new Date(), { months: 1, days: 5 });
+  const dayDifference = differenceInDays(date, new Date());
+  localStorage.setItem("savedDates", JSON.stringify([{ date }]));
+  render(() => <DaysTracker />);
+
+  let displayedDate = screen.getByTestId("dayContainer");
+  expect(displayedDate).toHaveTextContent(
+    `It's 1 month 5 days until ${format(date, "dd MMM yyyy")}`,
+  );
+
+  await userEvent.click(screen.getByRole("button", { name: "menu" }));
+  await userEvent.click(screen.getByRole("button", { name: /Toggle/i }));
+
+  displayedDate = screen.getByTestId("dayContainer");
+  expect(displayedDate).toHaveTextContent(
+    `It's ${dayDifference} days until ${format(date, "dd MMM yyyy")}`,
+  );
 });
