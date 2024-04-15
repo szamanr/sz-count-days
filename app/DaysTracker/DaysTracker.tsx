@@ -38,7 +38,7 @@ export const DaysTracker = () => {
                 class="group flex flex-col-reverse space-x-1 sm:flex-row sm:items-center"
                 data-testid="dayContainer"
               >
-                <div class="invisible hidden w-32 justify-start group-hover:visible group-hover:flex sm:flex sm:justify-end">
+                <div class="invisible hidden w-32 shrink-0 justify-start group-hover:visible group-hover:flex sm:flex sm:justify-end">
                   <DayActions
                     index={index}
                     date={date}
