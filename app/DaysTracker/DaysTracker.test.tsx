@@ -4,7 +4,15 @@ import { beforeEach, expect, it } from "vitest";
 import { userEvent } from "@testing-library/user-event";
 import { add, differenceInDays, format } from "date-fns";
 
-const addDate = async ({ date, name }: { date: Date; name?: string }) => {
+const addDate = async ({
+  date,
+  endDate,
+  name,
+}: {
+  date: Date;
+  endDate?: Date;
+  name?: string;
+}) => {
   await userEvent.click(screen.getByRole("button", { name: "add" }));
 
   if (name) {
@@ -17,6 +25,19 @@ const addDate = async ({ date, name }: { date: Date; name?: string }) => {
     screen.getByLabelText("Date"),
     format(date, "yyyy-MM-dd"),
   );
+
+  if (endDate) {
+    await userEvent.click(
+      screen.getByRole("button", { name: /More options/i }),
+    );
+
+    await userEvent.click(screen.getByLabelText("End date"));
+    await userEvent.type(
+      screen.getByLabelText("End date"),
+      format(endDate, "yyyy-MM-dd"),
+    );
+  }
+
   await userEvent.click(screen.getByRole("button", { name: "Add" }));
 };
 
@@ -52,6 +73,21 @@ it("can add date with name", async () => {
   expect(displayedDates).toHaveLength(1);
   expect(displayedDates[0]).toHaveTextContent(
     `It's 14 days until anniversary (${format(date, "dd MMM yyyy")})`,
+  );
+});
+
+it("can add date with duration", async () => {
+  render(() => <DaysTracker />);
+
+  const date = add(new Date(), { days: 14 });
+  const endDate = add(new Date(), { days: 21 });
+
+  await addDate({ date: date, endDate, name: "anniversary" });
+
+  const displayedDates = screen.getAllByTestId("day");
+  expect(displayedDates).toHaveLength(1);
+  expect(displayedDates[0]).toHaveTextContent(
+    `It's 14 days until anniversary (${format(date, "dd MMM yyyy")} - ${format(endDate, "dd MMM yyyy")}, 7 days)`,
   );
 });
 
