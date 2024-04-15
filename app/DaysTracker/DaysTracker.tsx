@@ -1,5 +1,5 @@
 import { createSignal, For } from "solid-js";
-import { SavedDate } from "./types";
+import { SavedDate, Settings } from "./types";
 import { Day } from "./Day/Day";
 import { unionBy } from "lodash";
 import "toastify-js/src/toastify.css";
@@ -24,7 +24,32 @@ export const DaysTracker = () => {
   }
   history.replaceState(null, "", "/");
 
-  const [dates, setDates] = createSignal(allDates);
+  const localStorageSettings: Settings = JSON.parse(
+    window.localStorage.getItem("settings") ?? "{}",
+  );
+
+  const [displayDurationInDays, setDisplayDurationInDays] = createSignal(
+    !!localStorageSettings.displayDurationInDays,
+  );
+  const toggleDisplayDurationInDays = () => {
+    const newValue = !displayDurationInDays();
+    setDisplayDurationInDays(newValue);
+    const newSettings = {
+      ...localStorageSettings,
+      displayDurationInDays: newValue,
+    };
+    window.localStorage.setItem("settings", JSON.stringify(newSettings));
+  };
+
+  const [dates, setDatesState] = createSignal(allDates);
+  const setDates = (newDates: SavedDate[]) => {
+    setDatesState(newDates);
+    if (newDates.length) {
+      window.localStorage.setItem("savedDates", JSON.stringify(newDates));
+    } else {
+      window.localStorage.removeItem("savedDates");
+    }
+  };
 
   const fallback = <p class="text-gray-500">Add a date below</p>;
 
@@ -46,14 +71,24 @@ export const DaysTracker = () => {
                     setDates={setDates}
                   />
                 </div>
-                <Day date={date.date} endDate={date.endDate} name={date.name} />
+                <Day
+                  date={date.date}
+                  endDate={date.endDate}
+                  name={date.name}
+                  displayDurationInDays={displayDurationInDays()}
+                />
               </div>
             </li>
           )}
         </For>
       </ul>
       <AddDate dates={dates} setDates={setDates} />
-      <Menu dates={dates} setDates={setDates} />
+      <Menu
+        dates={dates}
+        setDates={setDates}
+        displayDurationInDays={displayDurationInDays()}
+        toggleDisplayDurationInDays={toggleDisplayDurationInDays}
+      />
     </main>
   );
 };

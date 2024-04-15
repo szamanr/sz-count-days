@@ -1,4 +1,4 @@
-import { Accessor, Setter, Show } from "solid-js";
+import { Accessor, Show } from "solid-js";
 import { SavedDate } from "app/DaysTracker/types";
 import { without } from "lodash";
 import { toast } from "common/toast";
@@ -9,7 +9,7 @@ type Props = {
   date: SavedDate;
   dates: Accessor<SavedDate[]>;
   index: Accessor<number>;
-  setDates: Setter<SavedDate[]>;
+  setDates: (dates: SavedDate[]) => void;
 };
 
 export const DayActions = (props: Props) => {
@@ -27,13 +27,11 @@ export const DayActions = (props: Props) => {
       ...newDates.slice(index + offset),
     ];
     props.setDates(newDates);
-    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
   };
 
   const removeDate = (date: SavedDate) => {
     const newDates = without([...props.dates()], date);
     props.setDates(newDates);
-    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
   };
 
   const shareDate = async (date: SavedDate) => {
