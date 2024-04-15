@@ -1,4 +1,4 @@
-import { Accessor, Component, Setter } from "solid-js";
+import { Accessor, Component } from "solid-js";
 import { toast } from "common/toast.ts";
 import { Popover } from "@ark-ui/solid";
 import { Button } from "common/Button";
@@ -8,13 +8,12 @@ import { SavedDate } from "app/DaysTracker/types";
 
 type Props = {
   dates: Accessor<SavedDate[]>;
-  setDates: Setter<SavedDate[]>;
+  setDates: (dates: SavedDate[]) => void;
 };
 
 export const Menu: Component<Props> = (props) => {
   const removeAllDates = () => {
     props.setDates([]);
-    window.localStorage.removeItem("savedDates");
   };
 
   const shareAllDates = async () => {

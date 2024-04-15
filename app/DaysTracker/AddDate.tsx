@@ -1,4 +1,4 @@
-import { Accessor, Component, Setter, Show } from "solid-js";
+import { Accessor, Component, Show } from "solid-js";
 import { Collapsible, Popover } from "@ark-ui/solid";
 import { Input } from "common/Input";
 import { Button } from "common/Button";
@@ -31,7 +31,7 @@ type DateForm = z.infer<typeof schema>;
 
 type Props = {
   dates: Accessor<SavedDate[]>;
-  setDates: Setter<SavedDate[]>;
+  setDates: (dates: SavedDate[]) => void;
 };
 
 export const AddDate: Component<Props> = (props) => {
@@ -54,7 +54,6 @@ export const AddDate: Component<Props> = (props) => {
       },
     ];
     props.setDates(newDates);
-    window.localStorage.setItem("savedDates", JSON.stringify(newDates));
     reset(dateForm);
   };
 

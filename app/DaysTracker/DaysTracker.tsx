@@ -24,7 +24,15 @@ export const DaysTracker = () => {
   }
   history.replaceState(null, "", "/");
 
-  const [dates, setDates] = createSignal(allDates);
+  const [dates, setDatesState] = createSignal(allDates);
+  const setDates = (newDates: SavedDate[]) => {
+    setDatesState(newDates);
+    if (newDates.length) {
+      window.localStorage.setItem("savedDates", JSON.stringify(newDates));
+    } else {
+      window.localStorage.removeItem("savedDates");
+    }
+  };
 
   const fallback = <p class="text-gray-500">Add a date below</p>;
 
