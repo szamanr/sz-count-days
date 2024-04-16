@@ -4,8 +4,7 @@ import {
   formatDuration,
   intervalToDuration,
   isAfter,
-  isFuture,
-  isPast,
+  isBefore,
 } from "date-fns";
 import { pick } from "lodash";
 import { Strong } from "common/Strong";
@@ -39,7 +38,8 @@ export const Day = (props: Props) => {
 
   const now = format(new Date(), "dd MMM yyyy");
 
-  if (isFuture(date)) {
+  const isFuture = isAfter(date, now);
+  if (isFuture) {
     return (
       <p class={props.class} data-testid="day">
         <span>It's </span>
@@ -61,8 +61,9 @@ export const Day = (props: Props) => {
     );
   }
 
-  const past = (!!endDate && isPast(endDate)) || (!endDate && isPast(date));
-  if (past) {
+  const isPast =
+    (!!endDate && isBefore(endDate, now)) || (!endDate && isBefore(date, now));
+  if (isPast) {
     return (
       <p class={props.class} data-testid="day">
         <span>It's been </span>
@@ -105,7 +106,7 @@ export const Day = (props: Props) => {
 
   return (
     <p class={props.class} data-testid="day">
-      <Strong>{props.name ?? date}</Strong>
+      <Strong>{props.name || date}</Strong>
       <span> is today!</span>
     </p>
   );
