@@ -31,6 +31,7 @@ type DateForm = z.infer<typeof schema>;
 
 type Props = {
   dates: Accessor<SavedDate[]>;
+  expanded?: boolean;
   setDates: (dates: SavedDate[]) => void;
 };
 
@@ -98,7 +99,7 @@ export const AddDate: Component<Props> = (props) => {
                   </div>
                 )}
               </Field>
-              <Collapsible.Root>
+              <Collapsible.Root open={props.expanded}>
                 <Collapsible.Trigger class="hover:text-teal-500">
                   More options
                 </Collapsible.Trigger>

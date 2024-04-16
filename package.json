@@ -12,6 +12,7 @@
   "dependencies": {
     "@ark-ui/solid": "^2.2.0",
     "@modular-forms/solid": "^0.20.0",
+    "@solidjs/router": "^0.13.2",
     "autoprefixer": "^10.4.19",
     "date-fns": "^3.6.0",
     "eslint": "^8.57.0",
