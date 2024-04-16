@@ -5,16 +5,18 @@ import { toast } from "common/toast";
 import { Button } from "common/Button";
 import { Icon } from "common/Icon";
 
-type Props = {
-  date: SavedDate;
-  dates: Accessor<SavedDate[]>;
+type Props<DateType extends SavedDate> = {
+  date: DateType;
+  dates: Accessor<DateType[]>;
   index: Accessor<number>;
   reorder?: boolean;
-  setDates: (dates: SavedDate[]) => void;
+  setDates: (dates: DateType[]) => void;
 };
 
-export const DayActions = (props: Props) => {
-  const moveDate = (date: SavedDate, offset: 1 | -1) => {
+export const DayActions = <DateType extends SavedDate>(
+  props: Props<DateType>,
+) => {
+  const moveDate = (date: DateType, offset: 1 | -1) => {
     let newDates = [...props.dates()];
     const index = newDates.indexOf(date);
     if (index < 0 || index + offset < 0 || index + offset >= newDates.length) {
@@ -30,16 +32,20 @@ export const DayActions = (props: Props) => {
     props.setDates(newDates);
   };
 
-  const removeDate = (date: SavedDate) => {
+  const removeDate = (date: DateType) => {
     const newDates = without([...props.dates()], date);
     props.setDates(newDates);
   };
 
-  const shareDate = async (date: SavedDate) => {
+  const shareDate = async (date: DateType) => {
     const newSearchParams = new URLSearchParams({
       date: [date.date, date.endDate, date.name].filter((v) => !!v).join(" "),
     });
-    history.pushState(null, "", `/?${newSearchParams.toString()}`);
+    history.pushState(
+      null,
+      "",
+      `${location.pathname}?${newSearchParams.toString()}`,
+    );
     await navigator.clipboard.writeText(location.href);
     toast("URL copied to clipboard.");
   };

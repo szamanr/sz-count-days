@@ -53,6 +53,7 @@ export const DaysTracker = () => {
       window.localStorage.removeItem("savedDates");
     }
   };
+  const resetDates = () => setDates([]);
 
   const fallback = <p class="text-gray-500">Add a date below</p>;
 
@@ -87,7 +88,7 @@ export const DaysTracker = () => {
         </For>
       </ul>
       <AddDate dates={dates} setDates={setDates} />
-      <Menu dates={dates} setDates={setDates}>
+      <Menu dates={dates} resetDates={resetDates}>
         <MenuSettings
           settings={settings}
           toggleDisplayDurationInDays={toggleDisplayDurationInDays}

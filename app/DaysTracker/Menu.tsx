@@ -9,12 +9,12 @@ import { SavedDate } from "app/DaysTracker/types";
 type Props = {
   children?: JSX.Element;
   dates: Accessor<SavedDate[]>;
-  setDates: (dates: SavedDate[]) => void;
+  resetDates: () => void;
 };
 
 export const Menu: Component<Props> = (props) => {
   const removeAllDates = () => {
-    props.setDates([]);
+    props.resetDates();
   };
 
   const shareAllDates = async () => {
@@ -26,7 +26,11 @@ export const Menu: Component<Props> = (props) => {
         [date.date, date.endDate, date.name].filter((v) => !!v).join(" "),
       );
     });
-    history.pushState(null, "", `/?${newSearchParams.toString()}`);
+    history.pushState(
+      null,
+      "",
+      `${location.pathname}?${newSearchParams.toString()}`,
+    );
     await navigator.clipboard.writeText(location.href);
     toast("URL copied to clipboard.");
   };
