@@ -25,11 +25,11 @@ export const DaysTracker = () => {
   }
   history.replaceState(null, "", "/");
 
-  const localStorageSettings: Settings = JSON.parse(
+  const localStorageSettings: Partial<Settings> = JSON.parse(
     window.localStorage.getItem("settings") ?? "{}",
   );
 
-  const [settings, setSettingsStore] = createStore<Required<Settings>>({
+  const [settings, setSettingsStore] = createStore<Settings>({
     displayDurationInDays: !!localStorageSettings.displayDurationInDays,
     includeLastDay: !!localStorageSettings.includeLastDay,
   });
@@ -40,6 +40,8 @@ export const DaysTracker = () => {
 
   const toggleDisplayDurationInDays = () =>
     setSettings("displayDurationInDays", !settings.displayDurationInDays);
+  const toggleIncludeLastDay = () =>
+    setSettings("includeLastDay", !settings.includeLastDay);
 
   const [dates, setDatesState] = createSignal(allDates);
   const setDates = (newDates: SavedDate[]) => {
@@ -75,7 +77,7 @@ export const DaysTracker = () => {
                   date={date.date}
                   endDate={date.endDate}
                   name={date.name}
-                  displayDurationInDays={settings.displayDurationInDays}
+                  settings={settings}
                 />
               </div>
             </li>
@@ -86,8 +88,9 @@ export const DaysTracker = () => {
       <Menu
         dates={dates}
         setDates={setDates}
-        displayDurationInDays={settings.displayDurationInDays}
+        settings={settings}
         toggleDisplayDurationInDays={toggleDisplayDurationInDays}
+        toggleIncludeLastDay={toggleIncludeLastDay}
       />
     </main>
   );
