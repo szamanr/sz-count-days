@@ -24,7 +24,7 @@ export const DaysTracker = () => {
   if (allDates.length !== localStorageDates.length) {
     window.localStorage.setItem("savedDates", JSON.stringify(allDates));
   }
-  history.replaceState(null, "", "/");
+  history.replaceState(null, "", location.pathname);
 
   const localStorageSettings: Partial<Settings> = JSON.parse(
     window.localStorage.getItem("settings") ?? "{}",
