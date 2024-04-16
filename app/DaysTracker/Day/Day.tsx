@@ -1,4 +1,5 @@
 import {
+  addDays,
   differenceInCalendarDays,
   format,
   formatDuration,
@@ -35,6 +36,12 @@ export const Day = (props: Props) => {
     props.endDate && isAfter(props.endDate, props.date)
       ? format(props.endDate, "dd MMM yyyy")
       : undefined;
+  const endDateForDiff = () =>
+    endDate
+      ? props.settings.includeLastDay
+        ? format(addDays(endDate, 1), "dd MMM yyyy")
+        : endDate
+      : undefined;
 
   const now = format(new Date(), "dd MMM yyyy");
 
@@ -52,7 +59,12 @@ export const Day = (props: Props) => {
               <span>
                 {" "}
                 ({date} - {endDate()},{" "}
-                {diff(date, endDate(), props.settings.displayDurationInDays)})
+                {diff(
+                  date,
+                  endDateForDiff()!,
+                  props.settings.displayDurationInDays,
+                )}
+                )
               </span>
             )}
           </Show>
@@ -78,7 +90,12 @@ export const Day = (props: Props) => {
               <span>
                 {" "}
                 ({date} - {endDate()},{" "}
-                {diff(date, endDate(), props.settings.displayDurationInDays)})
+                {diff(
+                  date,
+                  endDateForDiff()!,
+                  props.settings.displayDurationInDays,
+                )}
+                )
               </span>
             )}
           </Show>
@@ -97,7 +114,9 @@ export const Day = (props: Props) => {
           <Strong>{props.name}</Strong>
         </Show>
         <span>, </span>
-        <span>{diff(now, endDate, props.settings.displayDurationInDays)}</span>
+        <span>
+          {diff(now, endDateForDiff()!, props.settings.displayDurationInDays)}
+        </span>
         <span> more to go!</span>
         <span> ({format(endDate, "dd MMM yyyy")})</span>
       </p>
