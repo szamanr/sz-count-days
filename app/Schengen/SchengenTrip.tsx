@@ -17,7 +17,7 @@ type Props = SavedDate & {
   class?: string;
 };
 
-export const SchengenDay = (props: Props) => {
+export const SchengenTrip = (props: Props) => {
   const date = format(props.date, "dd MMM yyyy");
   const endDate =
     props.endDate && isAfter(props.endDate, props.date)

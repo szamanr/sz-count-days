@@ -4,7 +4,7 @@ import "toastify-js/src/toastify.css";
 import { useQueryDates } from "app/DaysTracker/useQueryDates";
 import { DayActions } from "app/DaysTracker/Day/DayActions";
 import { Menu } from "app/DaysTracker/Menu";
-import { SchengenDay } from "app/Schengen/SchengenDay";
+import { SchengenTrip } from "app/Schengen/SchengenTrip";
 import { isAfter } from "date-fns";
 import { Summary } from "app/Schengen/Summary";
 import { SchengenDate } from "app/Schengen/types";
@@ -63,7 +63,7 @@ export const Schengen = () => {
                     setDates={setDates}
                   />
                 </div>
-                <SchengenDay
+                <SchengenTrip
                   date={date.date}
                   endDate={date.endDate}
                   name={date.name}
