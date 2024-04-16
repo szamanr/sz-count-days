@@ -7,13 +7,13 @@ import {
 } from "date-fns";
 import { Strong } from "common/Strong";
 import { Show } from "solid-js";
-import { SavedDate } from "app/DaysTracker/types";
 import { twClass } from "common/twClass";
+import { SchengenDate } from "app/Schengen/types";
 
 const diff = (start: string, end: string) =>
   `${differenceInCalendarDays(end, start)} days`;
 
-type Props = SavedDate & {
+type Props = SchengenDate & {
   class?: string;
 };
 
