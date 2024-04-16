@@ -9,6 +9,7 @@ type Props = {
   date: SavedDate;
   dates: Accessor<SavedDate[]>;
   index: Accessor<number>;
+  reorder?: boolean;
   setDates: (dates: SavedDate[]) => void;
 };
 
@@ -45,7 +46,7 @@ export const DayActions = (props: Props) => {
 
   return (
     <>
-      <Show when={props.index() > 0}>
+      <Show when={props.reorder && props.index() > 0}>
         <Button
           class="text-teal-500 hover:text-teal-400"
           onClick={moveDate.bind(null, props.date, -1)}
@@ -54,7 +55,7 @@ export const DayActions = (props: Props) => {
           <Icon class="!text-2xl sm:!text-xl" name="arrow_upward" size="xl" />
         </Button>
       </Show>
-      <Show when={props.index() < props.dates().length - 1}>
+      <Show when={props.reorder && props.index() < props.dates().length - 1}>
         <Button
           class="text-teal-500 hover:text-teal-400"
           onClick={moveDate.bind(null, props.date, 1)}

@@ -71,6 +71,7 @@ export const DaysTracker = () => {
                     index={index}
                     date={date}
                     dates={dates}
+                    reorder
                     setDates={setDates}
                   />
                 </div>
