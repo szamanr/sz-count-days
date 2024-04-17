@@ -4,6 +4,7 @@ import {
   format,
   isAfter,
   isBefore,
+  isSameDay,
 } from "date-fns";
 import { Strong } from "common/Strong";
 import { Show } from "solid-js";
@@ -18,25 +19,20 @@ type Props = SchengenDate & {
 };
 
 export const SchengenTrip = (props: Props) => {
-  const date = format(props.date, "dd MMM yyyy");
-  const endDate =
-    props.endDate && isAfter(props.endDate, props.date)
-      ? format(props.endDate, "dd MMM yyyy")
-      : undefined;
-  const endDateForDiff = () =>
-    endDate ? format(addDays(endDate, 1), "dd MMM yyyy") : undefined;
-
   const now = format(new Date(), "dd MMM yyyy");
+  const date = format(props.date, "dd MMM yyyy");
+  const endDate = isAfter(props.endDate, props.date)
+    ? format(props.endDate, "dd MMM yyyy")
+    : now;
+  const endDateForDiff = () => format(addDays(endDate, 1), "dd MMM yyyy");
 
-  const isFuture = isAfter(date, now);
-
-  const duration = () =>
-    differenceInCalendarDays(endDateForDiff() ?? now, date);
+  const duration = () => differenceInCalendarDays(endDateForDiff(), date);
   const formattedDuration = () => `${duration()} days`;
   const isOverdue90 = () => duration() > 90;
   const className = () =>
     isOverdue90() ? twClass(props.class, "text-red-500") : props.class;
 
+  const isFuture = isAfter(date, now);
   if (isFuture) {
     return (
       <p class={className()} data-testid="day">
@@ -45,63 +41,54 @@ export const SchengenTrip = (props: Props) => {
         <span> until </span>
         <Show when={props.name} fallback={date}>
           <Strong>{props.name}</Strong>
-          <Show when={endDate} fallback={<span> ({date})</span>}>
-            {(endDate) => (
-              <span>
-                {" "}
-                ({date} - {endDate()}, {formattedDuration()})
-              </span>
-            )}
-          </Show>
+          <span>
+            {" "}
+            ({date} - {endDate}, {formattedDuration()})
+          </span>
         </Show>
       </p>
     );
   }
 
-  const isPast =
-    (!!endDate && isBefore(endDate, now)) || (!endDate && isBefore(date, now));
+  const isPast = isBefore(endDate, now);
   if (isPast) {
     return (
       <p class={className()} data-testid="day">
         <span>It's been </span>
-        <span>{diff(endDate ?? date, now)}</span>
+        <span>{diff(endDateForDiff(), now)}</span>
         <span> since </span>
-        <Show when={props.name} fallback={endDate ?? date}>
+        <Show when={props.name} fallback={endDate}>
           <Strong>{props.name}</Strong>
-          <Show when={endDate} fallback={<span> ({date})</span>}>
-            {(endDate) => (
-              <span>
-                {" "}
-                ({date} - {endDate()}, {formattedDuration()})
-              </span>
-            )}
-          </Show>
+          <span>
+            {" "}
+            ({date} - {endDate}, {formattedDuration()})
+          </span>
         </Show>
       </p>
     );
   }
 
-  if (endDate) {
-    return (
-      <p class={className()} data-testid="day">
+  // else: is present
+  return (
+    <p class={className()} data-testid="day">
+      <Show when={!isSameDay(date, now)}>
         <span>It's been </span>
         <span>{diff(date, now)}</span>
         <span> since </span>
-        <Show when={props.name} fallback={date}>
-          <Strong>{props.name}</Strong>
-        </Show>
-        <span>, </span>
-        <span>{diff(now, endDateForDiff()!)}</span>
-        <span> more to go!</span>
-        <span> ({format(endDate, "dd MMM yyyy")})</span>
-      </p>
-    );
-  }
-
-  return (
-    <p class={className()} data-testid="day">
-      <Strong>{props.name || date}</Strong>
-      <span> is today!</span>
+      </Show>
+      <Show when={props.name} fallback={date}>
+        <Strong>{props.name}</Strong>
+      </Show>
+      <Show when={isSameDay(date, now)}>
+        <span> starts today</span>
+      </Show>
+      <span>, </span>
+      <span>{diff(now, endDateForDiff()!)}</span>
+      <span> remaining</span>
+      <span>
+        {" "}
+        ({date} - {endDate})
+      </span>
     </p>
   );
 };
