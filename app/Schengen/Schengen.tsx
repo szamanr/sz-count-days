@@ -12,6 +12,7 @@ import { AddSchengenDate } from "app/Schengen/AddSchengenDate";
 import { useTrips } from "app/Schengen/useTrips";
 
 export const Schengen = () => {
+  document.title = "Count Schengen Days";
   const queryDates = useQueryDates<SchengenDate>();
 
   const localStorageDates: SchengenDate[] = JSON.parse(
