@@ -87,7 +87,7 @@ export const SchengenTrip = (props: Props) => {
       <span> remaining</span>
       <span>
         {" "}
-        ({date} - {endDate})
+        ({date} - {endDate}, {formattedDuration()})
       </span>
     </p>
   );
