@@ -5,16 +5,12 @@ import {
   differenceInCalendarDays,
   format,
   isBefore,
-  isSameYear,
-  max,
-  min,
   subDays,
 } from "date-fns";
 import { Strong } from "common/Strong";
 import { SchengenDate } from "app/Schengen/types";
-
-const dateFormat = (date: Date | string) =>
-  isSameYear(new Date(), date) ? "dd MMM" : "dd MMM yyyy";
+import { useTrips } from "app/Schengen/useTrips";
+import { formattedDate } from "common/formattedDate";
 
 type Trip = SchengenDate & { duration: number };
 
@@ -33,49 +29,12 @@ export const Summary: Component<Props> = (props) => {
         1 +
         differenceInCalendarDays(format(date.endDate, "yyyy-MM-dd"), date.date),
     }));
+  const { daysRemainingAt } = useTrips(trips);
 
   const dates = (): Trip[] =>
     trips()
       // don't display dates which don't affect our available days budget as of today
       .filter((trip) => !isBefore(trip.endDate, startOfCurrent180DayWindow));
-
-  const daysRemainingAt = (entranceDate: Date | string) => {
-    let exitDate = entranceDate;
-    let relevantTrips = trips()
-      // remove future trips from calculation
-      .filter((trip) => isBefore(trip.date, exitDate))
-      .map((trip) => ({ ...trip, daysUed: 0 }));
-    let duration = 0;
-
-    while (duration < 90) {
-      exitDate = addDays(entranceDate, duration);
-      const startOfRolling180DayWindow = subDays(exitDate, 180 - 1);
-      relevantTrips = relevantTrips
-        // consider only trips which ended within our rolling window
-        .filter((trip) => !isBefore(trip.endDate, startOfRolling180DayWindow))
-        // calculate trip's used days within our rolling window
-        .map((trip) => ({
-          ...trip,
-          daysUsed:
-            differenceInCalendarDays(
-              min([trip.endDate, exitDate]),
-              max([trip.date, startOfRolling180DayWindow]),
-            ) + 1,
-        }));
-      const used = relevantTrips.reduce(
-        (sum, { daysUsed }) => sum + daysUsed,
-        0,
-      );
-
-      if (used + duration >= 90) {
-        return duration;
-      } else {
-        duration++;
-      }
-    }
-
-    return duration;
-  };
 
   const exitDateToday = () => addDays(now, daysRemainingAt(now));
 
@@ -105,7 +64,7 @@ export const Summary: Component<Props> = (props) => {
           </span>
           <Strong>{daysRemainingAt(now)}</Strong>
           <span> days, until </span>
-          <span>{format(exitDateToday(), dateFormat(exitDateToday()))}</span>
+          <span>{formattedDate(exitDateToday())}</span>
         </p>
       </Show>
       <Show when={currentTrip()}>
@@ -117,12 +76,11 @@ export const Summary: Component<Props> = (props) => {
           return (
             <p>
               <span>
-                If you enter on {format(entranceDate, dateFormat(entranceDate))}
-                , you can stay for{" "}
+                If you enter on {formattedDate(entranceDate)}, you can stay for{" "}
               </span>
               <Strong>{duration}</Strong>
               <span> days, until </span>
-              <span>{format(exitDate, dateFormat(exitDate))}</span>
+              <span>{formattedDate(exitDate)}</span>
             </p>
           );
         }}
@@ -152,12 +110,11 @@ export const Summary: Component<Props> = (props) => {
           return (
             <p>
               <span>
-                If you enter on {format(entranceDate, dateFormat(entranceDate))}
-                , you can stay for{" "}
+                If you enter on {formattedDate(entranceDate)}, you can stay for{" "}
               </span>
               <Strong>{remaining}</Strong>
               <span> days, until </span>
-              <span>{format(exitDate, dateFormat(exitDate))}</span>
+              <span>{formattedDate(exitDate)}</span>
             </p>
           );
         }}
