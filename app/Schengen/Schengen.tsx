@@ -9,6 +9,7 @@ import { isAfter } from "date-fns";
 import { Summary } from "app/Schengen/Summary";
 import { SchengenDate } from "app/Schengen/types";
 import { AddSchengenDate } from "app/Schengen/AddSchengenDate";
+import { useTrips } from "app/Schengen/useTrips";
 
 export const Schengen = () => {
   const queryDates = useQueryDates<SchengenDate>();
@@ -27,6 +28,7 @@ export const Schengen = () => {
   history.replaceState(null, "", location.pathname);
 
   const [dates, setDatesState] = createSignal(allDates);
+  const { daysRemainingAt } = useTrips(dates);
   const setDates = (newDates: SchengenDate[]) => {
     const orderedDates = [...newDates].sort((a, b) =>
       isAfter(a.date, b.date) ? 1 : -1,
@@ -65,6 +67,7 @@ export const Schengen = () => {
                 </div>
                 <SchengenTrip
                   date={date.date}
+                  daysRemainingAt={daysRemainingAt}
                   endDate={date.endDate}
                   name={date.name}
                 />

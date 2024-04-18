@@ -16,6 +16,7 @@ const diff = (start: string, end: string) =>
 
 type Props = SchengenDate & {
   class?: string;
+  daysRemainingAt: (date: Date | string) => number;
 };
 
 export const SchengenTrip = (props: Props) => {
@@ -28,9 +29,16 @@ export const SchengenTrip = (props: Props) => {
 
   const duration = () => differenceInCalendarDays(endDateForDiff(), date);
   const formattedDuration = () => `${duration()} days`;
-  const isOverdue90 = () => duration() > 90;
+
+  const isOverstay = () => duration() > props.daysRemainingAt(date);
   const className = () =>
-    isOverdue90() ? twClass(props.class, "text-red-500") : props.class;
+    isOverstay() ? twClass(props.class, "text-red-500") : props.class;
+  const error = () =>
+    isOverstay() ? (
+      <span class="block text-sm">
+        Cannot stay longer than {props.daysRemainingAt(date)} days.
+      </span>
+    ) : undefined;
 
   const isFuture = isAfter(date, now);
   if (isFuture) {
@@ -39,13 +47,14 @@ export const SchengenTrip = (props: Props) => {
         <span>It's </span>
         <span>{diff(now, date)}</span>
         <span> until </span>
-        <Show when={props.name} fallback={date}>
+        <Show when={props.name} fallback={<span>trip</span>}>
           <Strong>{props.name}</Strong>
-          <span>
-            {" "}
-            ({date} - {endDate}, {formattedDuration()})
-          </span>
         </Show>
+        <span>
+          {" "}
+          ({date} - {endDate}, {formattedDuration()})
+        </span>
+        {error()}
       </p>
     );
   }
@@ -57,13 +66,14 @@ export const SchengenTrip = (props: Props) => {
         <span>It's been </span>
         <span>{diff(endDateForDiff(), now)}</span>
         <span> since </span>
-        <Show when={props.name} fallback={endDate}>
+        <Show when={props.name} fallback={<span>trip</span>}>
           <Strong>{props.name}</Strong>
-          <span>
-            {" "}
-            ({date} - {endDate}, {formattedDuration()})
-          </span>
         </Show>
+        <span>
+          {" "}
+          ({date} - {endDate}, {formattedDuration()})
+        </span>
+        {error()}
       </p>
     );
   }
@@ -76,7 +86,7 @@ export const SchengenTrip = (props: Props) => {
         <span>{diff(date, now)}</span>
         <span> since </span>
       </Show>
-      <Show when={props.name} fallback={date}>
+      <Show when={props.name} fallback={<span>trip</span>}>
         <Strong>{props.name}</Strong>
       </Show>
       <Show when={isSameDay(date, now)}>
@@ -89,6 +99,7 @@ export const SchengenTrip = (props: Props) => {
         {" "}
         ({date} - {endDate}, {formattedDuration()})
       </span>
+      {error()}
     </p>
   );
 };
