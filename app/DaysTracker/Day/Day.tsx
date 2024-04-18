@@ -11,8 +11,13 @@ import { pick } from "lodash";
 import { Strong } from "common/Strong";
 import { Show } from "solid-js";
 import { SavedDate, Settings } from "app/DaysTracker/types";
+import { formattedDate } from "common/formattedDate";
 
-const diff = (start: string, end: string, displayDurationInDays: boolean) => {
+const diff = (
+  start: Date | string,
+  end: Date | string,
+  displayDurationInDays: boolean,
+) => {
   if (displayDurationInDays)
     return `${differenceInCalendarDays(end, start)} days`;
   return formatDuration(
@@ -31,36 +36,37 @@ type Props = SavedDate & {
 };
 
 export const Day = (props: Props) => {
-  const date = format(props.date, "dd MMM yyyy");
   const endDate =
     props.endDate && isAfter(props.endDate, props.date)
-      ? format(props.endDate, "dd MMM yyyy")
+      ? props.endDate
       : undefined;
   const endDateForDiff = () =>
     endDate
       ? props.settings.includeLastDay
-        ? format(addDays(endDate, 1), "dd MMM yyyy")
+        ? addDays(endDate, 1)
         : endDate
       : undefined;
 
-  const now = format(new Date(), "dd MMM yyyy");
+  const now = format(new Date(), "yyyy-MM-dd");
 
-  const isFuture = isAfter(date, now);
+  const isFuture = isAfter(props.date, now);
   if (isFuture) {
     return (
       <p class={props.class} data-testid="day">
         <span>It's </span>
-        <span>{diff(now, date, props.settings.displayDurationInDays)}</span>
+        <span>
+          {diff(now, props.date, props.settings.displayDurationInDays)}
+        </span>
         <span> until </span>
-        <Show when={props.name} fallback={date}>
+        <Show when={props.name} fallback={props.date}>
           <Strong>{props.name}</Strong>
-          <Show when={endDate} fallback={<span> ({date})</span>}>
+          <Show when={endDate} fallback={<span> ({props.date})</span>}>
             {(endDate) => (
               <span>
                 {" "}
-                ({date} - {endDate()},{" "}
+                ({formattedDate(props.date)} - {formattedDate(endDate())},{" "}
                 {diff(
-                  date,
+                  props.date,
                   endDateForDiff()!,
                   props.settings.displayDurationInDays,
                 )}
@@ -74,24 +80,32 @@ export const Day = (props: Props) => {
   }
 
   const isPast =
-    (!!endDate && isBefore(endDate, now)) || (!endDate && isBefore(date, now));
+    (!!endDate && isBefore(endDate, now)) ||
+    (!endDate && isBefore(props.date, now));
   if (isPast) {
     return (
       <p class={props.class} data-testid="day">
         <span>It's been </span>
         <span>
-          {diff(endDate ?? date, now, props.settings.displayDurationInDays)}
+          {diff(
+            endDate ?? props.date,
+            now,
+            props.settings.displayDurationInDays,
+          )}
         </span>
         <span> since </span>
-        <Show when={props.name} fallback={endDate ?? date}>
+        <Show when={props.name} fallback={formattedDate(endDate ?? props.date)}>
           <Strong>{props.name}</Strong>
-          <Show when={endDate} fallback={<span> ({date})</span>}>
+          <Show
+            when={endDate}
+            fallback={<span> ({formattedDate(props.date)})</span>}
+          >
             {(endDate) => (
               <span>
                 {" "}
-                ({date} - {endDate()},{" "}
+                ({formattedDate(props.date)} - {formattedDate(endDate())},{" "}
                 {diff(
-                  date,
+                  props.date,
                   endDateForDiff()!,
                   props.settings.displayDurationInDays,
                 )}
@@ -108,9 +122,11 @@ export const Day = (props: Props) => {
     return (
       <p class={props.class} data-testid="day">
         <span>It's been </span>
-        <span>{diff(date, now, props.settings.displayDurationInDays)}</span>
+        <span>
+          {diff(props.date, now, props.settings.displayDurationInDays)}
+        </span>
         <span> since </span>
-        <Show when={props.name} fallback={date}>
+        <Show when={props.name} fallback={props.date}>
           <Strong>{props.name}</Strong>
         </Show>
         <span>, </span>
@@ -118,14 +134,14 @@ export const Day = (props: Props) => {
           {diff(now, endDateForDiff()!, props.settings.displayDurationInDays)}
         </span>
         <span> more to go!</span>
-        <span> ({format(endDate, "dd MMM yyyy")})</span>
+        <span> ({formattedDate(endDate)})</span>
       </p>
     );
   }
 
   return (
     <p class={props.class} data-testid="day">
-      <Strong>{props.name || date}</Strong>
+      <Strong>{props.name || formattedDate(props.date)}</Strong>
       <span> is today!</span>
     </p>
   );

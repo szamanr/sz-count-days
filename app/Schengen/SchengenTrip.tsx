@@ -10,8 +10,9 @@ import { Strong } from "common/Strong";
 import { Show } from "solid-js";
 import { twClass } from "common/twClass";
 import { SchengenDate } from "app/Schengen/types";
+import { formattedDate } from "common/formattedDate";
 
-const diff = (start: string, end: string) =>
+const diff = (start: Date | string, end: Date | string) =>
   `${differenceInCalendarDays(end, start)} days`;
 
 type Props = SchengenDate & {
@@ -20,39 +21,37 @@ type Props = SchengenDate & {
 };
 
 export const SchengenTrip = (props: Props) => {
-  const now = format(new Date(), "dd MMM yyyy");
-  const date = format(props.date, "dd MMM yyyy");
-  const endDate = isAfter(props.endDate, props.date)
-    ? format(props.endDate, "dd MMM yyyy")
-    : now;
-  const endDateForDiff = () => format(addDays(endDate, 1), "dd MMM yyyy");
+  const now = format(new Date(), "yyyy-MM-dd");
+  const endDate = isAfter(props.endDate, props.date) ? props.endDate : now;
+  const endDateForDiff = () => addDays(endDate, 1);
 
-  const duration = () => differenceInCalendarDays(endDateForDiff(), date);
+  const duration = () => differenceInCalendarDays(endDateForDiff(), props.date);
   const formattedDuration = () => `${duration()} days`;
 
-  const isOverstay = () => duration() > props.daysRemainingAt(date);
+  const isOverstay = () => duration() > props.daysRemainingAt(props.date);
   const className = () =>
     isOverstay() ? twClass(props.class, "text-red-500") : props.class;
   const error = () =>
     isOverstay() ? (
       <span class="block text-sm">
-        Cannot stay longer than {props.daysRemainingAt(date)} days.
+        Cannot stay longer than {props.daysRemainingAt(props.date)} days.
       </span>
     ) : undefined;
 
-  const isFuture = isAfter(date, now);
+  const isFuture = isAfter(props.date, now);
   if (isFuture) {
     return (
       <p class={className()} data-testid="day">
         <span>It's </span>
-        <span>{diff(now, date)}</span>
+        <span>{diff(now, props.date)}</span>
         <span> until </span>
         <Show when={props.name} fallback={<span>trip</span>}>
           <Strong>{props.name}</Strong>
         </Show>
         <span>
           {" "}
-          ({date} - {endDate}, {formattedDuration()})
+          ({formattedDate(props.date)} - {formattedDate(endDate)},{" "}
+          {formattedDuration()})
         </span>
         {error()}
       </p>
@@ -71,7 +70,8 @@ export const SchengenTrip = (props: Props) => {
         </Show>
         <span>
           {" "}
-          ({date} - {endDate}, {formattedDuration()})
+          ({formattedDate(props.date)} - {formattedDate(endDate)},{" "}
+          {formattedDuration()})
         </span>
         {error()}
       </p>
@@ -81,15 +81,15 @@ export const SchengenTrip = (props: Props) => {
   // else: is present
   return (
     <p class={className()} data-testid="day">
-      <Show when={!isSameDay(date, now)}>
+      <Show when={!isSameDay(props.date, now)}>
         <span>It's been </span>
-        <span>{diff(date, now)}</span>
+        <span>{diff(props.date, now)}</span>
         <span> since </span>
       </Show>
       <Show when={props.name} fallback={<span>trip</span>}>
         <Strong>{props.name}</Strong>
       </Show>
-      <Show when={isSameDay(date, now)}>
+      <Show when={isSameDay(props.date, now)}>
         <span> starts today</span>
       </Show>
       <span>, </span>
@@ -97,7 +97,8 @@ export const SchengenTrip = (props: Props) => {
       <span> remaining</span>
       <span>
         {" "}
-        ({date} - {endDate}, {formattedDuration()})
+        ({formattedDate(props.date)} - {formattedDate(endDate)},{" "}
+        {formattedDuration()})
       </span>
       {error()}
     </p>
