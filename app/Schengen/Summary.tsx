@@ -61,23 +61,25 @@ export const Summary: Component<Props> = (props) => {
 
   return (
     <div class="space-y-1">
+      <p class="grid grid-cols-3 space-x-4 font-semibold">
+        <span>If you enter on</span>
+        <span>you can stay for</span>
+        <span>until</span>
+      </p>
       <Index each={availableEnterDates()}>
         {(date) => {
           return (
-            <p>
+            <p class="grid grid-cols-3 space-x-4 odd:text-stone-400">
               <Show when={isToday(date().date)}>
-                <span>
-                  If you enter today ({formattedDate(date().date)}), you can
-                  stay for{" "}
-                </span>
+                <span>Today ({formattedDate(date().date)})</span>
               </Show>
               <Show when={!isToday(date().date)}>
-                <span>
-                  If you enter on {formattedDate(date().date)}, you can stay for{" "}
-                </span>
+                <span>{formattedDate(date().date)}</span>
               </Show>
-              <Strong>{date().duration}</Strong>
-              <span> days, until </span>
+              <span>
+                <Strong>{date().duration}</Strong>
+                <span> days</span>
+              </span>
               <span>{formattedDate(date().endDate)}</span>
             </p>
           );
