@@ -1,5 +1,12 @@
 import { ParentComponent } from "solid-js";
+import { twClass } from "common/twClass";
 
-export const Strong: ParentComponent = ({ children }) => (
-  <span class="font-medium text-teal-500">{children}</span>
+type Props = {
+  class?: string;
+};
+
+export const Strong: ParentComponent<Props> = (props) => (
+  <span class={twClass("font-medium text-teal-500", props.class)}>
+    {props.children}
+  </span>
 );

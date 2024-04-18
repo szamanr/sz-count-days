@@ -8,6 +8,7 @@ import { Menu } from "./Menu";
 import { DayActions } from "./Day/DayActions";
 import { useQueryDates } from "./useQueryDates";
 import { createStore } from "solid-js/store";
+import { MenuSettings } from "./Menu/MenuSettings";
 
 export const DaysTracker = () => {
   const queryDates = useQueryDates();
@@ -23,7 +24,7 @@ export const DaysTracker = () => {
   if (allDates.length !== localStorageDates.length) {
     window.localStorage.setItem("savedDates", JSON.stringify(allDates));
   }
-  history.replaceState(null, "", "/");
+  history.replaceState(null, "", location.pathname);
 
   const localStorageSettings: Partial<Settings> = JSON.parse(
     window.localStorage.getItem("settings") ?? "{}",
@@ -52,6 +53,7 @@ export const DaysTracker = () => {
       window.localStorage.removeItem("savedDates");
     }
   };
+  const resetDates = () => setDates([]);
 
   const fallback = <p class="text-gray-500">Add a date below</p>;
 
@@ -70,6 +72,7 @@ export const DaysTracker = () => {
                     index={index}
                     date={date}
                     dates={dates}
+                    reorder
                     setDates={setDates}
                   />
                 </div>
@@ -85,13 +88,13 @@ export const DaysTracker = () => {
         </For>
       </ul>
       <AddDate dates={dates} setDates={setDates} />
-      <Menu
-        dates={dates}
-        setDates={setDates}
-        settings={settings}
-        toggleDisplayDurationInDays={toggleDisplayDurationInDays}
-        toggleIncludeLastDay={toggleIncludeLastDay}
-      />
+      <Menu dates={dates} resetDates={resetDates}>
+        <MenuSettings
+          settings={settings}
+          toggleDisplayDurationInDays={toggleDisplayDurationInDays}
+          toggleIncludeLastDay={toggleIncludeLastDay}
+        />
+      </Menu>
     </main>
   );
 };

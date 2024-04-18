@@ -1,7 +1,7 @@
 import { SavedDate } from "app/DaysTracker/types";
 import { isMatch } from "date-fns";
 
-export const useQueryDates = () => {
+export const useQueryDates = <DateType extends SavedDate>(): DateType[] => {
   const searchParams = new URLSearchParams(document.location.search);
   return searchParams
     .getAll("date")
@@ -9,7 +9,7 @@ export const useQueryDates = () => {
       (date) =>
         date.match(
           /(?<date>\d{4}-\d{2}-\d{2})( (?<endDate>\d{4}-\d{2}-\d{2}))?( (?<name>.*))?/,
-        )?.groups as SavedDate,
+        )?.groups as DateType,
     )
     .filter((date) => !!date)
     .filter(({ date }) => isMatch(date, "yyyy-MM-dd"))
