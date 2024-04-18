@@ -64,7 +64,7 @@ export const AddDate: Component<Props> = (props) => {
         <Icon class="!font-semibold" name="add" size="2xl" />
       </Popover.Trigger>
       <Popover.Positioner>
-        <Popover.Content class="min-w-96 rounded bg-gray-600 p-4">
+        <Popover.Content class="z-10 min-w-96 rounded bg-gray-600 p-4">
           <Popover.Title>Pick a date</Popover.Title>
           <Form onSubmit={handleSubmit}>
             <Popover.Description class="space-y-2 py-2">
