@@ -5,7 +5,7 @@ import { useQueryDates } from "app/DaysTracker/useQueryDates";
 import { DayActions } from "app/DaysTracker/Day/DayActions";
 import { Menu } from "app/DaysTracker/Menu";
 import { SchengenTrip } from "app/Schengen/SchengenTrip";
-import { isAfter } from "date-fns";
+import { isAfter, isPast } from "date-fns";
 import { Summary } from "app/Schengen/Summary";
 import { SchengenDate } from "app/Schengen/types";
 import { AddSchengenDate } from "app/Schengen/AddSchengenDate";
@@ -22,7 +22,9 @@ export const Schengen = () => {
     queryDates,
     localStorageDates,
     ({ date, endDate, name }) => [date, endDate, name].join(","),
-  ).sort((a, b) => (isAfter(a.date, b.date) ? 1 : -1));
+  )
+    .filter((date) => date.endDate || isPast(date.date))
+    .sort((a, b) => (isAfter(a.date, b.date) ? 1 : -1));
   if (allDates.length !== localStorageDates.length) {
     window.localStorage.setItem("schengenDates", JSON.stringify(allDates));
   }
