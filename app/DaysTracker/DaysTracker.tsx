@@ -7,6 +7,7 @@ import { AddDate } from "./AddDate";
 import { Menu } from "./Menu";
 import { DayActions } from "./Day/DayActions";
 import { useQueryDates } from "./useQueryDates";
+import { createStore } from "solid-js/store";
 
 export const DaysTracker = () => {
   const queryDates = useQueryDates();
@@ -24,22 +25,23 @@ export const DaysTracker = () => {
   }
   history.replaceState(null, "", "/");
 
-  const localStorageSettings: Settings = JSON.parse(
+  const localStorageSettings: Partial<Settings> = JSON.parse(
     window.localStorage.getItem("settings") ?? "{}",
   );
 
-  const [displayDurationInDays, setDisplayDurationInDays] = createSignal(
-    !!localStorageSettings.displayDurationInDays,
-  );
-  const toggleDisplayDurationInDays = () => {
-    const newValue = !displayDurationInDays();
-    setDisplayDurationInDays(newValue);
-    const newSettings = {
-      ...localStorageSettings,
-      displayDurationInDays: newValue,
-    };
-    window.localStorage.setItem("settings", JSON.stringify(newSettings));
+  const [settings, setSettingsStore] = createStore<Settings>({
+    displayDurationInDays: !!localStorageSettings.displayDurationInDays,
+    includeLastDay: !!localStorageSettings.includeLastDay,
+  });
+  const setSettings = (key: keyof Settings, value: boolean) => {
+    setSettingsStore(key, value);
+    window.localStorage.setItem("settings", JSON.stringify(settings));
   };
+
+  const toggleDisplayDurationInDays = () =>
+    setSettings("displayDurationInDays", !settings.displayDurationInDays);
+  const toggleIncludeLastDay = () =>
+    setSettings("includeLastDay", !settings.includeLastDay);
 
   const [dates, setDatesState] = createSignal(allDates);
   const setDates = (newDates: SavedDate[]) => {
@@ -75,7 +77,7 @@ export const DaysTracker = () => {
                   date={date.date}
                   endDate={date.endDate}
                   name={date.name}
-                  displayDurationInDays={displayDurationInDays()}
+                  settings={settings}
                 />
               </div>
             </li>
@@ -86,8 +88,9 @@ export const DaysTracker = () => {
       <Menu
         dates={dates}
         setDates={setDates}
-        displayDurationInDays={displayDurationInDays()}
+        settings={settings}
         toggleDisplayDurationInDays={toggleDisplayDurationInDays}
+        toggleIncludeLastDay={toggleIncludeLastDay}
       />
     </main>
   );
