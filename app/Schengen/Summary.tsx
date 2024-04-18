@@ -1,4 +1,4 @@
-import { Accessor, Component, Index, Show } from "solid-js";
+import { Accessor, Component, createSignal, Index, Show } from "solid-js";
 import {
   addDays,
   differenceInCalendarDays,
@@ -10,6 +10,7 @@ import { Strong } from "common/Strong";
 import { SchengenDate } from "app/Schengen/types";
 import { useTrips } from "app/Schengen/useTrips";
 import { formattedDate } from "common/formattedDate";
+import { Input } from "common/Input";
 
 type Trip = SchengenDate & { duration: number };
 
@@ -19,6 +20,8 @@ type Props = {
 
 export const Summary: Component<Props> = (props) => {
   const now = format(new Date(), "yyyy-MM-dd");
+
+  const [myEnterDate, setMyEnterDate] = createSignal<string>();
 
   const trips = (): Trip[] =>
     props.dates().map((date) => ({
@@ -60,7 +63,7 @@ export const Summary: Component<Props> = (props) => {
   };
 
   return (
-    <div class="space-y-1">
+    <div class="space-y-2">
       <p class="grid grid-cols-3 space-x-4 font-semibold">
         <span>If you enter on</span>
         <span>you can stay for</span>
@@ -85,6 +88,25 @@ export const Summary: Component<Props> = (props) => {
           );
         }}
       </Index>
+      <p class="flex flex-col gap-4 py-2 odd:text-stone-400 sm:grid sm:grid-cols-3 sm:space-x-2">
+        <Input
+          class="w-48"
+          type="date"
+          value={myEnterDate()}
+          onChange={(e) => setMyEnterDate(e.target.value)}
+        />
+        <Show when={myEnterDate()}>
+          {(myDate) => {
+            const remaining = daysRemainingAt(myDate());
+            return (
+              <>
+                <span>{remaining} days</span>
+                <span>{formattedDate(addDays(myDate(), remaining - 1))}</span>
+              </>
+            );
+          }}
+        </Show>
+      </p>
     </div>
   );
 };
