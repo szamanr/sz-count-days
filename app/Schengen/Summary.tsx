@@ -25,9 +25,8 @@ export const Summary: Component<Props> = (props) => {
   const trips = (): Trip[] =>
     props.dates().map((date) => ({
       ...date,
-      duration:
-        1 +
-        differenceInCalendarDays(format(date.endDate, "yyyy-MM-dd"), date.date),
+      endDate: date.endDate || now,
+      duration: 1 + differenceInCalendarDays(date.endDate || now, date.date),
     }));
   const { daysRemainingAt } = useTrips(trips);
 
