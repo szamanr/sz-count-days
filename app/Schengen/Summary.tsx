@@ -1,11 +1,10 @@
-import { Accessor, Component, For, Show } from "solid-js";
+import { Accessor, Component, Index, Show } from "solid-js";
 import {
   addDays,
-  areIntervalsOverlapping,
   differenceInCalendarDays,
   format,
-  isBefore,
-  subDays,
+  isToday,
+  isWithinInterval,
 } from "date-fns";
 import { Strong } from "common/Strong";
 import { SchengenDate } from "app/Schengen/types";
@@ -20,7 +19,6 @@ type Props = {
 
 export const Summary: Component<Props> = (props) => {
   const now = format(new Date(), "yyyy-MM-dd");
-  const startOfCurrent180DayWindow = subDays(now, 180 - 1);
 
   const trips = (): Trip[] =>
     props.dates().map((date) => ({
@@ -30,94 +28,61 @@ export const Summary: Component<Props> = (props) => {
     }));
   const { daysRemainingAt } = useTrips(trips);
 
-  const dates = (): Trip[] =>
-    trips()
-      // don't display dates which don't affect our available days budget as of today
-      .filter((trip) => !isBefore(trip.endDate, startOfCurrent180DayWindow));
+  const overlaps = (date: Date) =>
+    trips().filter((trip) =>
+      isWithinInterval(date, {
+        start: trip.date,
+        end: trip.endDate,
+      }),
+    ).length > 0;
 
-  const exitDateToday = () => addDays(now, daysRemainingAt(now));
+  const availableEnterDates = () => {
+    const enterDates: Trip[] = [];
 
-  // TODO: this has the assumption that the reset date will be after today.
-  // it's always true due to how we filter trips, but maybe there's a more generic solution.
-  const remainingDaysFor = (dateIndex: number) => {
-    let remaining = daysRemainingAt(now);
-    for (let i = 0; i <= dateIndex; i++) {
-      remaining += dates()[i].duration;
+    for (let i = 0; i < 365; i++) {
+      const potentialEnterDate = addDays(now, i);
+      if (overlaps(potentialEnterDate)) continue;
+
+      const remaining = daysRemainingAt(potentialEnterDate);
+      if (!enterDates.at(-1) || enterDates.at(-1)?.duration !== remaining) {
+        enterDates.push({
+          date: format(potentialEnterDate, "yyyy-MM-dd"),
+          duration: remaining,
+          endDate: format(
+            addDays(potentialEnterDate, remaining - 1),
+            "yyyy-MM-dd",
+          ),
+        });
+      }
     }
-    return Math.min(90, remaining);
-  };
 
-  const currentTrip = () =>
-    dates().find(
-      ({ date, endDate }) =>
-        differenceInCalendarDays(now, date) >= 0 &&
-        differenceInCalendarDays(endDate, now) >= 0,
-    );
+    return enterDates;
+  };
 
   return (
     <div class="space-y-1">
-      <Show when={!currentTrip()}>
-        <p>
-          <span>
-            If you enter today ({format(now, "dd MMM")}), you can stay for{" "}
-          </span>
-          <Strong>{daysRemainingAt(now)}</Strong>
-          <span> days, until </span>
-          <span>{formattedDate(exitDateToday())}</span>
-        </p>
-      </Show>
-      <Show when={currentTrip()}>
-        {(trip) => {
-          const entranceDate = addDays(trip().endDate, 1);
-          const duration = daysRemainingAt(entranceDate);
-          const exitDate = addDays(entranceDate, duration - 1);
-
+      <Index each={availableEnterDates()}>
+        {(date) => {
           return (
             <p>
-              <span>
-                If you enter on {formattedDate(entranceDate)}, you can stay for{" "}
-              </span>
-              <Strong>{duration}</Strong>
+              <Show when={isToday(date().date)}>
+                <span>
+                  If you enter today ({formattedDate(date().date)}), you can
+                  stay for{" "}
+                </span>
+              </Show>
+              <Show when={!isToday(date().date)}>
+                <span>
+                  If you enter on {formattedDate(date().date)}, you can stay for{" "}
+                </span>
+              </Show>
+              <Strong>{date().duration}</Strong>
               <span> days, until </span>
-              <span>{formattedDate(exitDate)}</span>
+              <span>{formattedDate(date().endDate)}</span>
             </p>
           );
         }}
-      </Show>
-      <For each={dates()}>
-        {(date, index) => {
-          let remaining = remainingDaysFor(index());
-          let exitDate = addDays(date.endDate, 180);
-          let entranceDate = subDays(exitDate, remaining - 1);
-          let i = index() + 1;
-          while (
-            dates()[i] &&
-            areIntervalsOverlapping(
-              { start: dates()[i].date, end: dates()[i].endDate },
-              {
-                start: entranceDate,
-                end: exitDate,
-              },
-            )
-          ) {
-            remaining -= dates()[i].duration;
-            entranceDate = addDays(dates()[i].endDate, 1);
-            exitDate = addDays(entranceDate, remaining - 1);
-            i++;
-          }
-
-          return (
-            <p>
-              <span>
-                If you enter on {formattedDate(entranceDate)}, you can stay for{" "}
-              </span>
-              <Strong>{remaining}</Strong>
-              <span> days, until </span>
-              <span>{formattedDate(exitDate)}</span>
-            </p>
-          );
-        }}
-      </For>
+      </Index>
     </div>
   );
 };
