@@ -97,11 +97,14 @@ export const Summary: Component<Props> = (props) => {
         />
         <Show when={myEnterDate()}>
           {(myDate) => {
-            const remaining = daysRemainingAt(myDate());
             return (
               <>
-                <span>{remaining} days</span>
-                <span>{formattedDate(addDays(myDate(), remaining - 1))}</span>
+                <span>{daysRemainingAt(myDate())} days</span>
+                <span>
+                  {formattedDate(
+                    addDays(myDate(), daysRemainingAt(myDate()) - 1),
+                  )}
+                </span>
               </>
             );
           }}
