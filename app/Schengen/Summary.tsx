@@ -1,4 +1,4 @@
-import { Accessor, Component, createSignal, For, Index, Show } from "solid-js";
+import { Accessor, Component, createSignal, Index, Show } from "solid-js";
 import {
   addDays,
   differenceInCalendarDays,
@@ -12,9 +12,7 @@ import { useTrips } from "app/Schengen/useTrips";
 import { formattedDate } from "common/formattedDate";
 import { Input } from "common/Input";
 import { uniqBy } from "lodash";
-import { Tooltip } from "@ark-ui/solid";
-import { Icon } from "common/Icon";
-import { Portal } from "solid-js/web";
+import { OverlapTooltip } from "./OverlapTooltip";
 
 type Trip = SchengenDate & { duration: number };
 
@@ -108,22 +106,7 @@ export const Summary: Component<Props> = (props) => {
                     <span>{formattedDate(date().date)}</span>
                   </Show>
                   <Show when={date().overlappingTrips.length}>
-                    <Tooltip.Root closeDelay={100} openDelay={100}>
-                      <Tooltip.Trigger class="flex">
-                        <Icon name="warning" class="text-red-500" />
-                      </Tooltip.Trigger>
-                      <Portal>
-                        <Tooltip.Positioner>
-                          <Tooltip.Content class="z-10 rounded bg-gray-600 p-4 text-white">
-                            <For each={date().overlappingTrips}>
-                              {(trip) => (
-                                <p>overlaps with {trip.name || trip.dates}</p>
-                              )}
-                            </For>
-                          </Tooltip.Content>
-                        </Tooltip.Positioner>
-                      </Portal>
-                    </Tooltip.Root>
+                    <OverlapTooltip trips={date().overlappingTrips} />
                   </Show>
                 </span>
                 <span>
@@ -144,18 +127,16 @@ export const Summary: Component<Props> = (props) => {
           onChange={(e) => setMyEnterDate(e.target.value)}
         />
         <Show when={myEnterDate()}>
-          {(myDate) => {
-            return (
-              <>
-                <span>{daysRemainingAt(myDate())} days</span>
-                <span>
-                  {formattedDate(
-                    addDays(myDate(), daysRemainingAt(myDate()) - 1),
-                  )}
-                </span>
-              </>
-            );
-          }}
+          {(myDate) => (
+            <>
+              <span>{daysRemainingAt(myDate())} days</span>
+              <span>
+                {formattedDate(
+                  addDays(myDate(), daysRemainingAt(myDate()) - 1),
+                )}
+              </span>
+            </>
+          )}
         </Show>
       </p>
     </div>
