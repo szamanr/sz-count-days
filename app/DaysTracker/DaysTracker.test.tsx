@@ -215,11 +215,17 @@ it("can toggle to display as days", async () => {
     `It's 1 month 5 days until ${formattedDate(date)}`,
   );
 
-  await userEvent.click(screen.getByRole("button", { name: "menu" }));
-  await userEvent.click(screen.getByRole("button", { name: /Toggle/i }));
+  await userEvent.click(screen.getByLabelText(/Display as \d{1,2} days/i));
 
   displayedDate = screen.getByTestId("dayContainer");
   expect(displayedDate).toHaveTextContent(
     `It's ${dayDifference} days until ${formattedDate(date)}`,
+  );
+
+  await userEvent.click(screen.getByLabelText(/Display as \d{1,2} months?/i));
+
+  displayedDate = screen.getByTestId("dayContainer");
+  expect(displayedDate).toHaveTextContent(
+    `It's 1 month 5 days until ${formattedDate(date)}`,
   );
 });
