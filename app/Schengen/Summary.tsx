@@ -1,4 +1,4 @@
-import { Accessor, Component, createSignal, Index, Show } from "solid-js";
+import { Accessor, Component, createSignal, For, Index, Show } from "solid-js";
 import {
   addDays,
   differenceInCalendarDays,
@@ -11,6 +11,10 @@ import { SchengenDate } from "app/Schengen/types";
 import { useTrips } from "app/Schengen/useTrips";
 import { formattedDate } from "common/formattedDate";
 import { Input } from "common/Input";
+import { uniqBy } from "lodash";
+import { Tooltip } from "@ark-ui/solid";
+import { Icon } from "common/Icon";
+import { Portal } from "solid-js/web";
 
 type Trip = SchengenDate & { duration: number };
 
@@ -31,30 +35,52 @@ export const Summary: Component<Props> = (props) => {
     }));
   const { daysRemainingAt } = useTrips(trips);
 
-  const overlaps = (date: Date) =>
-    trips().filter((trip) =>
+  const overlaps = (date: Date) => {
+    const overlappingTrips = trips().filter((trip) =>
       isWithinInterval(date, {
         start: trip.date,
         end: trip.endDate,
       }),
-    ).length > 0;
+    );
+
+    return {
+      overlaps: overlappingTrips.length > 0,
+      overlappingTrips,
+    };
+  };
 
   const availableEnterDates = () => {
-    const enterDates: Trip[] = [];
+    const enterDates: (Trip & {
+      overlappingTrips: { name?: string; dates: string }[];
+    })[] = [];
 
     for (let i = 0; i < 365; i++) {
       const potentialEnterDate = addDays(now, i);
-      if (overlaps(potentialEnterDate)) continue;
+      if (overlaps(potentialEnterDate).overlaps) continue;
 
       const remaining = daysRemainingAt(potentialEnterDate);
+
       if (!enterDates.at(-1) || enterDates.at(-1)?.duration !== remaining) {
+        const potentialEndDate = addDays(potentialEnterDate, remaining - 1);
+        const overlappingTrips = uniqBy(
+          [
+            ...overlaps(potentialEndDate).overlappingTrips,
+            ...overlaps(addDays(potentialEnterDate, Math.floor(remaining / 2)))
+              .overlappingTrips,
+          ].map((trip) => ({
+            name: trip.name,
+            dates: [trip.date, trip.endDate]
+              .map((date) => formattedDate(date))
+              .join(" - "),
+          })),
+          (trip) => [trip.name, trip.dates].join("-"),
+        );
+
         enterDates.push({
           date: format(potentialEnterDate, "yyyy-MM-dd"),
           duration: remaining,
-          endDate: format(
-            addDays(potentialEnterDate, remaining - 1),
-            "yyyy-MM-dd",
-          ),
+          endDate: format(potentialEndDate, "yyyy-MM-dd"),
+          overlappingTrips,
         });
       }
     }
@@ -72,19 +98,41 @@ export const Summary: Component<Props> = (props) => {
       <Index each={availableEnterDates()}>
         {(date) => {
           return (
-            <p class="grid grid-cols-3 space-x-4 odd:text-stone-400">
-              <Show when={isToday(date().date)}>
-                <span>Today ({formattedDate(date().date)})</span>
-              </Show>
-              <Show when={!isToday(date().date)}>
-                <span>{formattedDate(date().date)}</span>
-              </Show>
-              <span>
-                <Strong>{date().duration}</Strong>
-                <span> days</span>
-              </span>
-              <span>{formattedDate(date().endDate)}</span>
-            </p>
+            <>
+              <p class="grid grid-cols-3 space-x-4 odd:text-stone-400">
+                <span class="flex items-center space-x-1">
+                  <Show when={isToday(date().date)}>
+                    <span>Today ({formattedDate(date().date)})</span>
+                  </Show>
+                  <Show when={!isToday(date().date)}>
+                    <span>{formattedDate(date().date)}</span>
+                  </Show>
+                  <Show when={date().overlappingTrips.length}>
+                    <Tooltip.Root closeDelay={100} openDelay={100}>
+                      <Tooltip.Trigger class="flex">
+                        <Icon name="warning" class="text-red-500" />
+                      </Tooltip.Trigger>
+                      <Portal>
+                        <Tooltip.Positioner>
+                          <Tooltip.Content class="z-10 rounded bg-gray-600 p-4 text-white">
+                            <For each={date().overlappingTrips}>
+                              {(trip) => (
+                                <p>overlaps with {trip.name || trip.dates}</p>
+                              )}
+                            </For>
+                          </Tooltip.Content>
+                        </Tooltip.Positioner>
+                      </Portal>
+                    </Tooltip.Root>
+                  </Show>
+                </span>
+                <span>
+                  <Strong>{date().duration}</Strong>
+                  <span> days</span>
+                </span>
+                <span>{formattedDate(date().endDate)}</span>
+              </p>
+            </>
           );
         }}
       </Index>
