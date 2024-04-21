@@ -58,7 +58,7 @@ export const Day = (props: Props) => {
           {diff(now, props.date, props.settings.displayDurationInDays)}
         </span>
         <span> until </span>
-        <Show when={props.name} fallback={props.date}>
+        <Show when={props.name} fallback={formattedDate(props.date)}>
           <Strong>{props.name}</Strong>
           <Show
             when={endDate}
