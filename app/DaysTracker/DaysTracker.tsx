@@ -39,8 +39,8 @@ export const DaysTracker = () => {
     window.localStorage.setItem("settings", JSON.stringify(settings));
   };
 
-  const toggleDisplayDurationInDays = () =>
-    setSettings("displayDurationInDays", !settings.displayDurationInDays);
+  const setDisplayDurationInDays = (value: boolean) =>
+    setSettings("displayDurationInDays", value);
   const toggleIncludeLastDay = () =>
     setSettings("includeLastDay", !settings.includeLastDay);
 
@@ -91,7 +91,7 @@ export const DaysTracker = () => {
       <Menu dates={dates} resetDates={resetDates}>
         <MenuSettings
           settings={settings}
-          toggleDisplayDurationInDays={toggleDisplayDurationInDays}
+          setDisplayDurationInDays={setDisplayDurationInDays}
           toggleIncludeLastDay={toggleIncludeLastDay}
         />
       </Menu>
