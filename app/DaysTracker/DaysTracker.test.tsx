@@ -3,6 +3,7 @@ import { DaysTracker } from "app/DaysTracker/DaysTracker";
 import { beforeEach, expect, it } from "vitest";
 import { userEvent } from "@testing-library/user-event";
 import { add, differenceInDays, format } from "date-fns";
+import { formattedDate } from "common/formattedDate";
 
 const addDate = async ({
   date,
@@ -58,7 +59,7 @@ it("can add date", async () => {
   const displayedDates = screen.getAllByTestId("day");
   expect(displayedDates).toHaveLength(1);
   expect(displayedDates[0]).toHaveTextContent(
-    `It's 1 month 5 days until ${format(date, "dd MMM yyyy")}`,
+    `It's 1 month 5 days until ${formattedDate(date)}`,
   );
 });
 
@@ -72,7 +73,7 @@ it("can add date with name", async () => {
   const displayedDates = screen.getAllByTestId("day");
   expect(displayedDates).toHaveLength(1);
   expect(displayedDates[0]).toHaveTextContent(
-    `It's 14 days until anniversary (${format(date, "dd MMM yyyy")})`,
+    `It's 14 days until anniversary (${formattedDate(date)})`,
   );
 });
 
@@ -87,7 +88,7 @@ it("can add date with duration", async () => {
   const displayedDates = screen.getAllByTestId("day");
   expect(displayedDates).toHaveLength(1);
   expect(displayedDates[0]).toHaveTextContent(
-    `It's 14 days until anniversary (${format(date, "dd MMM yyyy")} - ${format(endDate, "dd MMM yyyy")}, 7 days)`,
+    `It's 14 days until anniversary (${formattedDate(date)} - ${formattedDate(endDate)}, 7 days)`,
   );
 });
 
@@ -100,7 +101,7 @@ it("can remove date", async () => {
   expect(displayedDates).toHaveLength(1);
   const displayedDate = displayedDates[0];
   expect(displayedDate).toHaveTextContent(
-    `year start (${format(date.date, "dd MMM yyyy")})`,
+    `year start (${formattedDate(date.date)})`,
   );
 
   await userEvent.hover(displayedDate);
@@ -211,7 +212,7 @@ it("can toggle to display as days", async () => {
 
   let displayedDate = screen.getByTestId("dayContainer");
   expect(displayedDate).toHaveTextContent(
-    `It's 1 month 5 days until ${format(date, "dd MMM yyyy")}`,
+    `It's 1 month 5 days until ${formattedDate(date)}`,
   );
 
   await userEvent.click(screen.getByRole("button", { name: "menu" }));
@@ -219,6 +220,6 @@ it("can toggle to display as days", async () => {
 
   displayedDate = screen.getByTestId("dayContainer");
   expect(displayedDate).toHaveTextContent(
-    `It's ${dayDifference} days until ${format(date, "dd MMM yyyy")}`,
+    `It's ${dayDifference} days until ${formattedDate(date)}`,
   );
 });
