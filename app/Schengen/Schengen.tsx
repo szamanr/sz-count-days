@@ -69,10 +69,9 @@ export const Schengen = () => {
                   />
                 </div>
                 <SchengenTrip
-                  date={date.date}
+                  trip={date}
+                  otherTrips={dates}
                   daysRemainingAt={daysRemainingAt}
-                  endDate={date.endDate}
-                  name={date.name}
                 />
               </div>
             </li>

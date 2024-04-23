@@ -1,9 +1,10 @@
-import { Accessor, Component, Show } from "solid-js";
+import { Accessor, Component, For, Show } from "solid-js";
 import { Popover } from "@ark-ui/solid";
 import { Input } from "common/Input";
 import { Button } from "common/Button";
 import {
   createForm,
+  getValue,
   reset,
   SubmitHandler,
   zodForm,
@@ -13,6 +14,8 @@ import { SchengenDate } from "./types";
 import { isAfter, isMatch, isSameDay } from "date-fns";
 import { Icon } from "common/Icon";
 import { toast } from "common/toast";
+import { formattedDate } from "common/formattedDate";
+import { useTrips } from "app/Schengen/useTrips";
 
 const schema = z.object({
   date: z
@@ -38,6 +41,8 @@ type Props = {
 };
 
 export const AddSchengenDate: Component<Props> = (props) => {
+  const { overlappingTrips } = useTrips(props.dates);
+
   const [dateForm, { Form, Field }] = createForm<DateForm>({
     validate: zodForm(schema),
   });
@@ -123,6 +128,26 @@ export const AddSchengenDate: Component<Props> = (props) => {
                   </div>
                 )}
               </Field>
+              <For
+                each={overlappingTrips(
+                  getValue(dateForm, "date") ?? "",
+                  getValue(dateForm, "endDate") ?? undefined,
+                )}
+              >
+                {(trip) => {
+                  const tripDates = `${formattedDate(trip.date)} - ${formattedDate(trip.endDate)}`;
+                  return (
+                    <p class="text-red-500">
+                      <span>overlaps with </span>
+                      <span>
+                        <Show when={trip.name} fallback={tripDates}>
+                          {trip.name} ({tripDates})
+                        </Show>
+                      </span>
+                    </p>
+                  );
+                }}
+              </For>
               <Button type="submit">Add</Button>
             </Popover.Description>
           </Form>
