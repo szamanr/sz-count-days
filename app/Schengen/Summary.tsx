@@ -11,10 +11,6 @@ type Trip = SchengenDate & { duration: number };
 
 type Props = {
   dates: Accessor<SchengenDate[]>;
-  overlappingTrips: (
-    date: Date | string,
-    endDate?: Date | string,
-  ) => SchengenDate[];
 };
 
 export const Summary: Component<Props> = (props) => {
@@ -28,7 +24,7 @@ export const Summary: Component<Props> = (props) => {
       endDate: date.endDate || now,
       duration: 1 + differenceInCalendarDays(date.endDate || now, date.date),
     }));
-  const { daysRemainingAt } = useTrips(trips);
+  const { daysRemainingAt, overlappingTrips } = useTrips(trips);
 
   const availableEnterDates = () => {
     const enterDates: (Trip & {
@@ -37,27 +33,28 @@ export const Summary: Component<Props> = (props) => {
 
     for (let i = 0; i < 365; i++) {
       const potentialEnterDate = addDays(now, i);
-      if (props.overlappingTrips(potentialEnterDate).length) continue;
+      if (overlappingTrips(potentialEnterDate).length) continue;
 
       const remaining = daysRemainingAt(potentialEnterDate);
 
       if (enterDates.at(-1)?.duration === remaining) continue;
 
       const potentialEndDate = addDays(potentialEnterDate, remaining - 1);
-      const overlappingTrips = props
-        .overlappingTrips(potentialEnterDate, potentialEndDate)
-        .map((trip) => ({
-          name: trip.name,
-          dates: [trip.date, trip.endDate]
-            .map((date) => formattedDate(date))
-            .join(" - "),
-        }));
+      const overlapping = overlappingTrips(
+        potentialEnterDate,
+        potentialEndDate,
+      ).map((trip) => ({
+        name: trip.name,
+        dates: [trip.date, trip.endDate]
+          .map((date) => formattedDate(date))
+          .join(" - "),
+      }));
 
       enterDates.push({
         date: format(potentialEnterDate, "yyyy-MM-dd"),
         duration: remaining,
         endDate: format(potentialEndDate, "yyyy-MM-dd"),
-        overlappingTrips,
+        overlappingTrips: overlapping,
       });
     }
 

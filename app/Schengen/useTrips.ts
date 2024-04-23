@@ -1,9 +1,26 @@
 import { SchengenDate } from "app/Schengen/types";
-import { addDays, isBefore, max, min, subDays } from "date-fns";
+import {
+  addDays,
+  areIntervalsOverlapping,
+  isBefore,
+  isValid,
+  isWithinInterval,
+  max,
+  min,
+  subDays,
+} from "date-fns";
 import { Accessor } from "solid-js";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
 
-export const useTrips = (trips: Accessor<SchengenDate[]>) => {
+type Hook = {
+  daysRemainingAt: (entranceDate: Date | string) => number;
+  overlappingTrips: (
+    date: Date | string,
+    endDate?: Date | string,
+  ) => SchengenDate[];
+};
+
+export const useTrips = (trips: Accessor<SchengenDate[]>): Hook => {
   const startOfRolling180DayWindow = (date: Date | string) =>
     subDays(date, 180 - 1);
 
@@ -52,5 +69,41 @@ export const useTrips = (trips: Accessor<SchengenDate[]>) => {
     return duration;
   };
 
-  return { daysRemainingAt };
+  const overlappingTrips = (date: Date | string, endDate?: Date | string) => {
+    if (!date && !endDate) return [];
+
+    if (endDate) {
+      if (!isValid(new Date(endDate)) || !isValid(new Date(date))) {
+        console.error(
+          `received invalid dates ("${date}", "${endDate}") when trying to find overlapping trips.`,
+        );
+        return [];
+      }
+      return trips().filter((trip) =>
+        areIntervalsOverlapping(
+          { start: date, end: endDate },
+          {
+            start: trip.date,
+            end: trip.endDate,
+          },
+        ),
+      );
+    }
+
+    if (!isValid(new Date(date))) {
+      console.error(
+        `received invalid date "${date}" when trying to find overlapping trips.`,
+      );
+      return [];
+    }
+
+    return trips().filter((trip) =>
+      isWithinInterval(date, {
+        start: trip.date,
+        end: trip.endDate,
+      }),
+    );
+  };
+
+  return { daysRemainingAt, overlappingTrips };
 };

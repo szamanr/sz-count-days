@@ -15,6 +15,7 @@ import { isAfter, isMatch, isSameDay } from "date-fns";
 import { Icon } from "common/Icon";
 import { toast } from "common/toast";
 import { formattedDate } from "common/formattedDate";
+import { useTrips } from "app/Schengen/useTrips";
 
 const schema = z.object({
   date: z
@@ -36,14 +37,12 @@ type DateForm = z.infer<typeof schema>;
 
 type Props = {
   dates: Accessor<SchengenDate[]>;
-  overlappingTrips: (
-    date: Date | string,
-    endDate?: Date | string,
-  ) => SchengenDate[];
   setDates: (dates: SchengenDate[]) => void;
 };
 
 export const AddSchengenDate: Component<Props> = (props) => {
+  const { overlappingTrips } = useTrips(props.dates);
+
   const [dateForm, { Form, Field }] = createForm<DateForm>({
     validate: zodForm(schema),
   });
@@ -130,7 +129,7 @@ export const AddSchengenDate: Component<Props> = (props) => {
                 )}
               </Field>
               <For
-                each={props.overlappingTrips(
+                each={overlappingTrips(
                   getValue(dateForm, "date") ?? "",
                   getValue(dateForm, "endDate") ?? undefined,
                 )}
