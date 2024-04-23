@@ -36,12 +36,12 @@ const schema = z.object({
 type DateForm = z.infer<typeof schema>;
 
 type Props = {
-  dates: Accessor<SchengenDate[]>;
-  setDates: (dates: SchengenDate[]) => void;
+  trips: Accessor<SchengenDate[]>;
+  setTrips: (dates: SchengenDate[]) => void;
 };
 
-export const AddSchengenDate: Component<Props> = (props) => {
-  const { overlappingTrips } = useTrips(props.dates);
+export const AddSchengenTrip: Component<Props> = (props) => {
+  const { overlappingTrips } = useTrips(props.trips);
 
   const [dateForm, { Form, Field }] = createForm<DateForm>({
     validate: zodForm(schema),
@@ -59,14 +59,14 @@ export const AddSchengenDate: Component<Props> = (props) => {
     }
 
     const newDates = [
-      ...props.dates(),
+      ...props.trips(),
       {
         date: form.date,
         endDate: form.endDate,
         name: form.name,
       },
     ];
-    props.setDates(newDates);
+    props.setTrips(newDates);
     reset(dateForm);
   };
 

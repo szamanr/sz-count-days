@@ -10,7 +10,7 @@ import { OverlapTooltip } from "./OverlapTooltip";
 type Trip = SchengenDate & { duration: number };
 
 type Props = {
-  dates: Accessor<SchengenDate[]>;
+  trips: Accessor<SchengenDate[]>;
 };
 
 export const Summary: Component<Props> = (props) => {
@@ -19,10 +19,10 @@ export const Summary: Component<Props> = (props) => {
   const [myEnterDate, setMyEnterDate] = createSignal<string>();
 
   const trips = (): Trip[] =>
-    props.dates().map((date) => ({
-      ...date,
-      endDate: date.endDate || now,
-      duration: 1 + differenceInCalendarDays(date.endDate || now, date.date),
+    props.trips().map((trip) => ({
+      ...trip,
+      endDate: trip.endDate || now,
+      duration: 1 + differenceInCalendarDays(trip.endDate || now, trip.date),
     }));
   const { daysRemainingAt, overlappingTrips } = useTrips(trips);
 
