@@ -8,53 +8,53 @@ import { SchengenTrip } from "app/Schengen/SchengenTrip";
 import { isAfter, isPast } from "date-fns";
 import { Summary } from "app/Schengen/Summary";
 import { SchengenDate } from "app/Schengen/types";
-import { AddSchengenDate } from "app/Schengen/AddSchengenDate";
+import { AddSchengenTrip } from "app/Schengen/AddSchengenTrip";
 import { useTrips } from "app/Schengen/useTrips";
 
 export const Schengen = () => {
   document.title = "Count Schengen Days";
-  const queryDates = useQueryDates<SchengenDate>();
+  const queryTrips = useQueryDates<SchengenDate>();
 
-  const localStorageDates: SchengenDate[] = JSON.parse(
+  const localStorageTrips: SchengenDate[] = JSON.parse(
     window.localStorage.getItem("schengenDates") ?? "[]",
   );
-  const allDates = unionBy(
-    queryDates,
-    localStorageDates,
+  const allTrips = unionBy(
+    queryTrips,
+    localStorageTrips,
     ({ date, endDate, name }) => [date, endDate, name].join(","),
   )
     .filter((date) => date.endDate || isPast(date.date))
     .sort((a, b) => (isAfter(a.date, b.date) ? 1 : -1));
-  if (allDates.length !== localStorageDates.length) {
-    window.localStorage.setItem("schengenDates", JSON.stringify(allDates));
+  if (allTrips.length !== localStorageTrips.length) {
+    window.localStorage.setItem("schengenDates", JSON.stringify(allTrips));
   }
   history.replaceState(null, "", location.pathname);
 
-  const [dates, setDatesState] = createSignal(allDates);
-  const { daysRemainingAt } = useTrips(dates);
-  const setDates = (newDates: SchengenDate[]) => {
-    const orderedDates = [...newDates].sort((a, b) =>
+  const [trips, setTripsState] = createSignal(allTrips);
+  const { daysRemainingAt } = useTrips(trips);
+  const setTrips = (newTrips: SchengenDate[]) => {
+    const orderedTrips = [...newTrips].sort((a, b) =>
       isAfter(a.date, b.date) ? 1 : -1,
     );
-    setDatesState(orderedDates);
-    if (newDates.length) {
+    setTripsState(orderedTrips);
+    if (newTrips.length) {
       window.localStorage.setItem(
         "schengenDates",
-        JSON.stringify(orderedDates),
+        JSON.stringify(orderedTrips),
       );
     } else {
       window.localStorage.removeItem("schengenDates");
     }
   };
-  const resetDates = () => setDates([]);
+  const resetTrips = () => setTrips([]);
 
   const fallback = <p class="text-gray-500">Add a trip below</p>;
 
   return (
     <main class="flex w-full flex-col items-center space-y-4 p-8">
       <ul class="space-y-2">
-        <For each={dates()} fallback={fallback}>
-          {(date, index) => (
+        <For each={trips()} fallback={fallback}>
+          {(trip, index) => (
             <li>
               <div
                 class="group flex flex-col-reverse space-x-1 sm:flex-row sm:items-center"
@@ -63,14 +63,14 @@ export const Schengen = () => {
                 <div class="invisible hidden w-32 shrink-0 justify-start group-hover:visible group-hover:flex sm:flex sm:justify-end">
                   <DayActions
                     index={index}
-                    date={date}
-                    dates={dates}
-                    setDates={setDates}
+                    date={trip}
+                    dates={trips}
+                    setDates={setTrips}
                   />
                 </div>
                 <SchengenTrip
-                  trip={date}
-                  otherTrips={dates}
+                  trip={trip}
+                  otherTrips={trips}
                   daysRemainingAt={daysRemainingAt}
                 />
               </div>
@@ -78,9 +78,9 @@ export const Schengen = () => {
           )}
         </For>
       </ul>
-      <AddSchengenDate dates={dates} setDates={setDates} />
-      <Summary dates={dates} />
-      <Menu dates={dates} resetDates={resetDates} />
+      <AddSchengenTrip trips={trips} setTrips={setTrips} />
+      <Summary trips={trips} />
+      <Menu dates={trips} resetDates={resetTrips} />
     </main>
   );
 };
