@@ -8,10 +8,10 @@ import {
   isBefore,
 } from "date-fns";
 import { pick } from "lodash";
-import { Strong } from "common/Strong";
 import { Show } from "solid-js";
 import { SavedDate, Settings } from "app/DaysTracker/types";
 import { formattedDate } from "common/formattedDate";
+import { Strong } from "common/Strong";
 
 const diff = (
   start: Date | string,

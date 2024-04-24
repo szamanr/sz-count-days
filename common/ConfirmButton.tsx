@@ -1,4 +1,3 @@
-import { Button } from "./Button";
 import { isUndefined } from "lodash";
 import {
   Component,
@@ -8,6 +7,7 @@ import {
   Show,
   splitProps,
 } from "solid-js";
+import { Button } from "./Button";
 
 type Props = ComponentProps<typeof Button> & {
   messages?: {

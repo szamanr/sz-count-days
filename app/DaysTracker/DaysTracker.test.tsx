@@ -1,8 +1,8 @@
 import { cleanup, render, screen, within } from "@solidjs/testing-library";
-import { DaysTracker } from "app/DaysTracker/DaysTracker";
-import { beforeEach, expect, it } from "vitest";
 import { userEvent } from "@testing-library/user-event";
 import { add, differenceInDays, format } from "date-fns";
+import { beforeEach, expect, it } from "vitest";
+import { DaysTracker } from "app/DaysTracker/DaysTracker";
 import { formattedDate } from "common/formattedDate";
 
 const addDate = async ({
@@ -176,7 +176,7 @@ it("can remove all dates", async () => {
   localStorage.setItem("savedDates", JSON.stringify(dates));
   render(() => <DaysTracker />);
 
-  let displayedDates = screen.getAllByTestId("dayContainer");
+  const displayedDates = screen.getAllByTestId("dayContainer");
   expect(displayedDates).toHaveLength(3);
 
   await userEvent.click(screen.getByRole("button", { name: "menu" }));

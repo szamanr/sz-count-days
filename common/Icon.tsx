@@ -1,7 +1,7 @@
 import "material-symbols";
 import { MaterialSymbol } from "material-symbols";
-import { twClass } from "common/twClass";
 import { Component } from "solid-js";
+import { twClass } from "common/twClass";
 
 enum IconSize {
   "2xl" = "text-2xl", // !text-2xl

@@ -1,5 +1,5 @@
-import { DaysTracker } from "./DaysTracker/DaysTracker";
 import { Route, Router } from "@solidjs/router";
+import { DaysTracker } from "./DaysTracker/DaysTracker";
 import { Schengen } from "./Schengen/Schengen";
 
 const App = () => {
