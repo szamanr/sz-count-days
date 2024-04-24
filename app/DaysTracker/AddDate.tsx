@@ -10,19 +10,16 @@ import {
 } from "@modular-forms/solid";
 import { z } from "zod";
 import { SavedDate } from "./types";
-import { isAfter, isMatch } from "date-fns";
+import { isAfter } from "date-fns";
 import { Icon } from "common/Icon";
 
 const schema = z.object({
   date: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must follow the format: 2023-10-15")
-    .refine((input) => isMatch(input, "yyyy-MM-dd"), {
-      message: "Please provide a valid date in the format: 2023-10-15",
-    }),
+    .date("Please provide a valid date in the format: 2023-10-15"),
   endDate: z
     .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/, "date must follow the format: 2023-10-15")
+    .date("Please provide a valid date in the format: 2023-10-15")
     .or(z.literal("")),
   name: z.string().optional(),
 });
