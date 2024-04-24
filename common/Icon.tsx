@@ -14,6 +14,7 @@ enum IconSize {
   "9xl" = "text-9xl", // !text-9xl
   "base" = "text-base", // !text-base
   "lg" = "text-lg", // !text-lg
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "md" = "text-base", // !text-base
   "sm" = "text-sm", // !text-sm
   "xl" = "text-xl", // !text-xl
