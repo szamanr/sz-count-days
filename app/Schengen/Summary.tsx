@@ -1,10 +1,10 @@
-import { Accessor, Component, createSignal, Index, Show } from "solid-js";
 import { addDays, differenceInCalendarDays, format, isToday } from "date-fns";
-import { Strong } from "common/Strong";
+import { Accessor, Component, createSignal, Index, Show } from "solid-js";
 import { SchengenDate } from "app/Schengen/types";
 import { useTrips } from "app/Schengen/useTrips";
 import { formattedDate } from "common/formattedDate";
 import { Input } from "common/Input";
+import { Strong } from "common/Strong";
 import { OverlapTooltip } from "./OverlapTooltip";
 
 type Trip = SchengenDate & { duration: number };

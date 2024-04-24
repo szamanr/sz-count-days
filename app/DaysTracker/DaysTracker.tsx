@@ -1,14 +1,14 @@
-import { createSignal, For } from "solid-js";
-import { SavedDate, Settings } from "./types";
-import { Day } from "./Day/Day";
-import { unionBy } from "lodash";
 import "toastify-js/src/toastify.css";
-import { AddDate } from "./AddDate";
-import { Menu } from "./Menu";
-import { DayActions } from "./Day/DayActions";
-import { useQueryDates } from "./useQueryDates";
+import { unionBy } from "lodash";
+import { createSignal, For } from "solid-js";
 import { createStore } from "solid-js/store";
+import { AddDate } from "./AddDate";
+import { Day } from "./Day/Day";
+import { DayActions } from "./Day/DayActions";
+import { Menu } from "./Menu";
 import { MenuSettings } from "./Menu/MenuSettings";
+import { SavedDate, Settings } from "./types";
+import { useQueryDates } from "./useQueryDates";
 
 export const DaysTracker = () => {
   const queryDates = useQueryDates();

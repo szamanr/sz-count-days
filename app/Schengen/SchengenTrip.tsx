@@ -7,13 +7,13 @@ import {
   isBefore,
   isSameDay,
 } from "date-fns";
-import { Strong } from "common/Strong";
+import { isEqual } from "lodash";
 import { Accessor, For, JSX, Show } from "solid-js";
-import { twClass } from "common/twClass";
 import { SchengenDate } from "app/Schengen/types";
 import { formattedDate } from "common/formattedDate";
 import { Icon } from "common/Icon";
-import { isEqual } from "lodash";
+import { Strong } from "common/Strong";
+import { twClass } from "common/twClass";
 
 const diff = (start: Date | string, end: Date | string) =>
   `${differenceInCalendarDays(end, start)} days`;

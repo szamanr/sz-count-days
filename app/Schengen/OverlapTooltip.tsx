@@ -1,7 +1,7 @@
 import { Tooltip } from "@ark-ui/solid";
-import { Icon } from "common/Icon";
-import { Portal } from "solid-js/web";
 import { For } from "solid-js";
+import { Portal } from "solid-js/web";
+import { Icon } from "common/Icon";
 
 export const OverlapTooltip = (props: {
   trips: { name?: string; dates: string }[];

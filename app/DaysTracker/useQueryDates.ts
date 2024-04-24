@@ -1,5 +1,5 @@
-import { SavedDate } from "app/DaysTracker/types";
 import { isMatch } from "date-fns";
+import { SavedDate } from "app/DaysTracker/types";
 
 export const useQueryDates = <DateType extends SavedDate>(): DateType[] => {
   const searchParams = new URLSearchParams(document.location.search);

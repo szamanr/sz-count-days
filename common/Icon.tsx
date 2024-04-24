@@ -1,7 +1,7 @@
 import "material-symbols";
 import { MaterialSymbol } from "material-symbols";
-import { twClass } from "common/twClass";
 import { Component } from "solid-js";
+import { twClass } from "common/twClass";
 
 enum IconSize {
   "2xl" = "text-2xl", // !text-2xl
@@ -14,6 +14,7 @@ enum IconSize {
   "9xl" = "text-9xl", // !text-9xl
   "base" = "text-base", // !text-base
   "lg" = "text-lg", // !text-lg
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   "md" = "text-base", // !text-base
   "sm" = "text-sm", // !text-sm
   "xl" = "text-xl", // !text-xl

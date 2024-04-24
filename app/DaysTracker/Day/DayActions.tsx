@@ -1,9 +1,9 @@
+import { without } from "lodash";
 import { Accessor, Show } from "solid-js";
 import { SavedDate } from "app/DaysTracker/types";
-import { without } from "lodash";
-import { toast } from "common/toast";
 import { Button } from "common/Button";
 import { Icon } from "common/Icon";
+import { toast } from "common/toast";
 
 type Props<DateType extends SavedDate> = {
   date: DateType;

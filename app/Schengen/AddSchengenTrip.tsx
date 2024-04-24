@@ -1,7 +1,4 @@
-import { Accessor, Component, For, Show } from "solid-js";
 import { Popover } from "@ark-ui/solid";
-import { Input } from "common/Input";
-import { Button } from "common/Button";
 import {
   createForm,
   getValue,
@@ -9,13 +6,16 @@ import {
   SubmitHandler,
   zodForm,
 } from "@modular-forms/solid";
-import { z } from "zod";
-import { SchengenDate } from "./types";
 import { isAfter, isSameDay } from "date-fns";
-import { Icon } from "common/Icon";
-import { toast } from "common/toast";
-import { formattedDate } from "common/formattedDate";
+import { Accessor, Component, For, Show } from "solid-js";
+import { z } from "zod";
 import { useTrips } from "app/Schengen/useTrips";
+import { Button } from "common/Button";
+import { formattedDate } from "common/formattedDate";
+import { Icon } from "common/Icon";
+import { Input } from "common/Input";
+import { toast } from "common/toast";
+import { SchengenDate } from "./types";
 
 const schema = z.object({
   date: z

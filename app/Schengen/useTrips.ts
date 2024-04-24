@@ -1,4 +1,3 @@
-import { SchengenDate } from "app/Schengen/types";
 import {
   addDays,
   areIntervalsOverlapping,
@@ -9,8 +8,9 @@ import {
   min,
   subDays,
 } from "date-fns";
-import { Accessor } from "solid-js";
 import { differenceInCalendarDays } from "date-fns/differenceInCalendarDays";
+import { Accessor } from "solid-js";
+import { SchengenDate } from "app/Schengen/types";
 
 type Hook = {
   daysRemainingAt: (entranceDate: Date | string) => number;
