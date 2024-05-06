@@ -137,7 +137,10 @@ export const Day = (props: Props) => {
           {diff(now, endDateForDiff()!, props.settings.displayDurationInDays)}
         </span>
         <span> more to go!</span>
-        <span> ({formattedDate(endDate)})</span>
+        <span>
+          {" "}
+          ({formattedDate(props.date)} - {formattedDate(endDate)})
+        </span>
       </p>
     );
   }
