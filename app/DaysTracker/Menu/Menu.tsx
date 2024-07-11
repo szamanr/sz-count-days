@@ -78,6 +78,19 @@ export const Menu: Component<Props> = (props) => {
               />
               <span>Delete all</span>
             </ConfirmButton>
+            <a
+              class="flex w-full items-center justify-center gap-2 px-1 py-1 text-left font-semibold hover:text-teal-500"
+              href="https://github.com/szamanr/sz-count-days"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon
+                class="text-teal-400 hover:text-teal-800"
+                name="contact_support"
+                size="xl"
+              />
+              <span>Github</span>
+            </a>
           </div>
         </Popover.Content>
       </Popover.Positioner>
