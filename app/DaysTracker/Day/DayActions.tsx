@@ -16,9 +16,9 @@ type Props<DateType extends SavedDate> = {
 export const DayActions = <DateType extends SavedDate>(
   props: Props<DateType>,
 ) => {
-  const moveDate = (date: DateType, offset: 1 | -1) => {
+  const moveDate = (offset: 1 | -1) => {
     let newDates = [...props.dates()];
-    const index = newDates.indexOf(date);
+    const index = newDates.indexOf(props.date);
     if (index < 0 || index + offset < 0 || index + offset >= newDates.length) {
       return;
     }
@@ -26,20 +26,20 @@ export const DayActions = <DateType extends SavedDate>(
     newDates = [...newDates.slice(0, index), ...newDates.slice(index + 1)];
     newDates = [
       ...newDates.slice(0, index + offset),
-      date,
+      props.date,
       ...newDates.slice(index + offset),
     ];
     props.setDates(newDates);
   };
 
-  const removeDate = (date: DateType) => {
-    const newDates = without([...props.dates()], date);
+  const removeDate = () => {
+    const newDates = without([...props.dates()], props.date);
     props.setDates(newDates);
   };
 
-  const shareDate = async (date: DateType) => {
+  const shareDate = async () => {
     const newSearchParams = new URLSearchParams({
-      date: [date.date, date.endDate, date.name].filter((v) => !!v).join(" "),
+      date: [props.date.date, props.date.endDate, props.date.name].filter((v) => !!v).join(" "),
     });
     history.pushState(
       null,
@@ -55,7 +55,7 @@ export const DayActions = <DateType extends SavedDate>(
       <Show when={props.reorder && props.index() > 0}>
         <Button
           class="text-teal-500 hover:text-teal-400"
-          onClick={moveDate.bind(null, props.date, -1)}
+          onClick={moveDate.bind(null, -1)}
           variant="negative"
         >
           <Icon class="!text-2xl sm:!text-xl" name="arrow_upward" size="xl" />
@@ -64,7 +64,7 @@ export const DayActions = <DateType extends SavedDate>(
       <Show when={props.reorder && props.index() < props.dates().length - 1}>
         <Button
           class="text-teal-500 hover:text-teal-400"
-          onClick={moveDate.bind(null, props.date, 1)}
+          onClick={moveDate.bind(null, 1)}
           variant="negative"
         >
           <Icon class="!text-2xl sm:!text-xl" name="arrow_downward" size="xl" />
@@ -72,14 +72,14 @@ export const DayActions = <DateType extends SavedDate>(
       </Show>
       <Button
         class="text-teal-500 hover:text-teal-400"
-        onClick={shareDate.bind(null, props.date)}
+        onClick={shareDate}
         variant="negative"
       >
         <Icon class="!text-2xl sm:!text-xl" name="share" size="xl" />
       </Button>
       <Button
         class="text-red-500 hover:text-red-400"
-        onClick={removeDate.bind(null, props.date)}
+        onClick={removeDate}
         variant="negative"
       >
         <Icon class="!text-2xl sm:!text-xl" name="close" size="xl" />
