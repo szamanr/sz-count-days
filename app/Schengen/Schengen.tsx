@@ -3,7 +3,7 @@ import { isAfter, isPast } from "date-fns";
 import { unionBy } from "lodash";
 import { createSignal, For } from "solid-js";
 import { DayActions } from "app/DaysTracker/Day/DayActions";
-import { Menu } from "app/DaysTracker/Menu";
+import { Menu } from "app/DaysTracker/Menu/Menu";
 import { useQueryDates } from "app/DaysTracker/useQueryDates";
 import { AddSchengenTrip } from "app/Schengen/AddSchengenTrip";
 import { SchengenTrip } from "app/Schengen/SchengenTrip";

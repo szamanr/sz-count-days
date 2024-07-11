@@ -5,7 +5,7 @@ import { createStore } from "solid-js/store";
 import { AddDate } from "./AddDate";
 import { Day } from "./Day/Day";
 import { DayActions } from "./Day/DayActions";
-import { Menu } from "./Menu";
+import { Menu } from "./Menu/Menu";
 import { MenuSettings } from "./Menu/MenuSettings";
 import { SavedDate, Settings } from "./types";
 import { useQueryDates } from "./useQueryDates";
