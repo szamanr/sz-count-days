@@ -60,6 +60,22 @@ it("displays trips ordered by start date", async () => {
   expect(displayedTrips[2]).toHaveTextContent("trip 3");
 });
 
+it("displays summary", async () => {
+  render(() => <Schengen />);
+
+  const exitDate = add(new Date(), { days: 89 });
+
+  expect(screen.getByText("If you enter on")).toBeInTheDocument();
+  expect(screen.getByText("you can stay for")).toBeInTheDocument();
+  expect(screen.getByText("until")).toBeInTheDocument();
+
+  const summaryRows = screen.getAllByTestId("summaryRow");
+  expect(summaryRows).toHaveLength(1);
+  expect(summaryRows[0]).toHaveTextContent("Today");
+  expect(summaryRows[0]).toHaveTextContent("90 days");
+  expect(summaryRows[0]).toHaveTextContent(`${formattedDate(exitDate)}`);
+});
+
 it("can add trip", async () => {
   render(() => <Schengen />);
 
