@@ -1,6 +1,6 @@
 import { cleanup, render, screen, within } from "@solidjs/testing-library";
 import { userEvent } from "@testing-library/user-event";
-import { add, format } from "date-fns";
+import { add, format, sub } from "date-fns";
 import { beforeEach, expect, it } from "vitest";
 import { Schengen } from "app/Schengen/Schengen";
 import { formattedDate } from "common/formattedDate";
@@ -76,18 +76,19 @@ it("displays summary", async () => {
   expect(summaryRows[0]).toHaveTextContent(`${formattedDate(exitDate)}`);
 });
 
-it("can add trip", async () => {
+it("can add future trip", async () => {
   render(() => <Schengen />);
 
+  const tripLength = 8;
   const startDate = add(new Date(), { days: 14 });
-  const endDate = add(new Date(), { days: 21 });
+  const endDate = add(new Date(), { days: 14 + tripLength - 1 });
 
   await addTrip({ startDate, endDate });
 
   const displayedDates = screen.getAllByTestId("day");
   expect(displayedDates).toHaveLength(1);
   expect(displayedDates[0]).toHaveTextContent(
-    `It's 14 days until trip (${formattedDate(startDate)} - ${formattedDate(endDate)}, 8 days)`,
+    `It's 14 days until trip (${formattedDate(startDate)} - ${formattedDate(endDate)}, ${tripLength} days)`,
   );
 });
 
@@ -188,4 +189,29 @@ it("can share all trips", async () => {
     "?date=1024-01-01+1024-01-15+trip+1&date=2024-01-01+2024-01-15+trip+2&date=3024-01-01+3024-01-15+trip+3";
   expect(location.href).toContain(searchQuery);
   expect(await navigator.clipboard.readText()).toContain(searchQuery);
+});
+
+it("calculates summary for a single future trip", async () => {
+  const tripLength = 8;
+  const startDate = add(new Date(), { days: 14 });
+  const endDate = add(new Date(), { days: 14 + tripLength - 1 });
+  const nextFullExitDate = add(endDate, { days: 180 });
+  const nextFullEntranceDate = sub(nextFullExitDate, { days: 90 - 1 });
+  const trips = [{ date: startDate, endDate, name: "trip 1" }];
+  localStorage.setItem("schengenDates", JSON.stringify(trips));
+  render(() => <Schengen />);
+
+  const summaryRows = screen.getAllByTestId("summaryRow");
+  expect(summaryRows).toHaveLength(3);
+  expect(summaryRows[0]).toHaveTextContent("Today");
+  expect(summaryRows[0]).toHaveTextContent("90 days");
+  // TODO: bug? on prod it shows 31 oct, here 1 nov. maybe DST related
+  expect(summaryRows[1]).toHaveTextContent(
+    `${formattedDate(add(endDate, { days: 1 }))}`,
+  );
+  expect(summaryRows[1]).toHaveTextContent(`${90 - tripLength} days`);
+  expect(summaryRows[2]).toHaveTextContent(
+    `${formattedDate(nextFullEntranceDate)}`,
+  );
+  expect(summaryRows[2]).toHaveTextContent("90 days");
 });
