@@ -205,7 +205,6 @@ it("calculates summary for a single future trip", async () => {
   expect(summaryRows).toHaveLength(3);
   expect(summaryRows[0]).toHaveTextContent("Today");
   expect(summaryRows[0]).toHaveTextContent("90 days");
-  // TODO: bug? on prod it shows 31 oct, here 1 nov. maybe DST related
   expect(summaryRows[1]).toHaveTextContent(
     `${formattedDate(add(endDate, { days: 1 }))}`,
   );
@@ -214,4 +213,52 @@ it("calculates summary for a single future trip", async () => {
     `${formattedDate(nextFullEntranceDate)}`,
   );
   expect(summaryRows[2]).toHaveTextContent("90 days");
+});
+
+it("calculates summary for multiple future trips", async () => {
+  const trips = [
+    {
+      date: add(new Date(), { days: 10 }),
+      endDate: add(new Date(), { days: 10 + 7 - 1 }),
+      name: "1 week in france",
+    },
+    {
+      date: add(new Date(), { days: 20 }),
+      endDate: add(new Date(), { days: 20 + 14 - 1 }),
+      name: "2 weeks in spain",
+    },
+  ];
+  localStorage.setItem("schengenDates", JSON.stringify(trips));
+  render(() => <Schengen />);
+
+  const nextFullExitDate = add(add(new Date(), { days: 20 + 14 - 1 }), {
+    days: 180,
+  });
+  const nextFullEntranceDate = sub(nextFullExitDate, { days: 90 - 1 });
+
+  const summaryRows = screen.getAllByTestId("summaryRow");
+  expect(summaryRows).toHaveLength(5);
+  expect(summaryRows[0]).toHaveTextContent("Today");
+  expect(summaryRows[0]).toHaveTextContent("90 days");
+
+  // 83 days after 1w trip
+  expect(summaryRows[1]).toHaveTextContent(
+    `${formattedDate(add(new Date(), { days: 10 + 7 }))}`,
+  );
+  expect(summaryRows[1]).toHaveTextContent(`${90 - 7} days`);
+  // 69 days after 1w trip and 2w trip
+  expect(summaryRows[2]).toHaveTextContent(
+    `${formattedDate(add(new Date(), { days: 20 + 14 }))}`,
+  );
+  expect(summaryRows[2]).toHaveTextContent(`${90 - 7 - 14} days`);
+  // 76 days after 1w trip expires but 2w trip still counts
+  expect(summaryRows[3]).toHaveTextContent(
+    `${formattedDate(add(new Date(), { days: 10 + 7 - 1 + 180 - (90 - 14) + 1 }))}`,
+  );
+  expect(summaryRows[3]).toHaveTextContent(`${90 - 14} days`);
+
+  expect(summaryRows[4]).toHaveTextContent(
+    `${formattedDate(nextFullEntranceDate)}`,
+  );
+  expect(summaryRows[4]).toHaveTextContent("90 days");
 });
