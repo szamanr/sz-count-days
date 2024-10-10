@@ -19,6 +19,7 @@ const addDate = async ({
   if (name) {
     await userEvent.click(screen.getByLabelText(/Name/i));
     await userEvent.type(screen.getByLabelText(/Name/i), name);
+    await userEvent.click(screen.getByLabelText(/Name/i));
   }
 
   await userEvent.click(screen.getByLabelText("Date"));

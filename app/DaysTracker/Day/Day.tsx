@@ -9,9 +9,10 @@ import {
 } from "date-fns";
 import { pick } from "lodash";
 import { Show } from "solid-js";
-import { SavedDate, Settings } from "app/DaysTracker/types";
+import { Settings } from "app/DaysTracker/types";
 import { formattedDate } from "common/formattedDate";
 import { Strong } from "common/Strong";
+import { UTCDate } from "@date-fns/utc";
 
 const diff = (
   start: Date | string,
@@ -30,8 +31,11 @@ const diff = (
   );
 };
 
-type Props = SavedDate & {
+type Props = {
   class?: string;
+  date: UTCDate;
+  endDate?: UTCDate;
+  name?: string;
   settings: Settings;
 };
 
@@ -47,7 +51,7 @@ export const Day = (props: Props) => {
         : endDate
       : undefined;
 
-  const now = format(new Date(), "yyyy-MM-dd");
+  const now = format(new UTCDate(), "yyyy-MM-dd");
 
   const isFuture = isAfter(props.date, now);
   if (isFuture) {

@@ -9,6 +9,7 @@ import { Menu } from "./Menu/Menu";
 import { MenuSettings } from "./Menu/MenuSettings";
 import { SavedDate, Settings } from "./types";
 import { useQueryDates } from "./useQueryDates";
+import { UTCDate } from "@date-fns/utc";
 
 export const DaysTracker = () => {
   const queryDates = useQueryDates();
@@ -77,8 +78,8 @@ export const DaysTracker = () => {
                   />
                 </div>
                 <Day
-                  date={date.date}
-                  endDate={date.endDate}
+                  date={new UTCDate(date.date)}
+                  endDate={date.endDate ? new UTCDate(date.endDate) : undefined}
                   name={date.name}
                   settings={settings}
                 />
