@@ -71,26 +71,27 @@ export const Summary: Component<Props> = (props) => {
       <Index each={availableEnterDates()}>
         {(date) => {
           return (
-            <>
-              <p class="grid grid-cols-3 space-x-4 odd:text-stone-400">
-                <span class="flex items-center space-x-1">
-                  <Show when={isToday(date().date)}>
-                    <span>Today ({formattedDate(date().date)})</span>
-                  </Show>
-                  <Show when={!isToday(date().date)}>
-                    <span>{formattedDate(date().date)}</span>
-                  </Show>
-                  <Show when={date().overlappingTrips.length}>
-                    <OverlapTooltip trips={date().overlappingTrips} />
-                  </Show>
-                </span>
-                <span>
-                  <Strong>{date().duration}</Strong>
-                  <span> days</span>
-                </span>
-                <span>{formattedDate(date().endDate)}</span>
-              </p>
-            </>
+            <p
+              class="grid grid-cols-3 space-x-4 odd:text-stone-400"
+              data-testid="summaryRow"
+            >
+              <span class="flex items-center space-x-1">
+                <Show when={isToday(date().date)}>
+                  <span>Today ({formattedDate(date().date)})</span>
+                </Show>
+                <Show when={!isToday(date().date)}>
+                  <span>{formattedDate(date().date)}</span>
+                </Show>
+                <Show when={date().overlappingTrips.length}>
+                  <OverlapTooltip trips={date().overlappingTrips} />
+                </Show>
+              </span>
+              <span>
+                <Strong>{date().duration}</Strong>
+                <span> days</span>
+              </span>
+              <span>{formattedDate(date().endDate)}</span>
+            </p>
           );
         }}
       </Index>
