@@ -11,7 +11,7 @@
     "test": "vitest"
   },
   "dependencies": {
-    "@ark-ui/solid": "2.2.0",
+    "@ark-ui/solid": "5.34.1",
     "@date-fns/utc": "2.1.0",
     "@modular-forms/solid": "0.20.0",
     "@solidjs/router": "0.13.2",
