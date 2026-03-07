@@ -1,5 +1,6 @@
+import { Popover } from "@ark-ui/solid";
 import { without } from "lodash";
-import { Accessor, Show } from "solid-js";
+import { Accessor, createSignal, JSX, Show } from "solid-js";
 import { SavedDate } from "app/DaysTracker/types";
 import { Button } from "common/Button";
 import { Icon } from "common/Icon";
@@ -8,6 +9,7 @@ import { toast } from "common/toast";
 type Props<DateType extends SavedDate> = {
   date: DateType;
   dates: Accessor<DateType[]>;
+  editPopover?: (close: () => void) => JSX.Element;
   index: Accessor<number>;
   reorder?: boolean;
   setDates: (dates: DateType[]) => void;
@@ -16,6 +18,8 @@ type Props<DateType extends SavedDate> = {
 export const DayActions = <DateType extends SavedDate>(
   props: Props<DateType>,
 ) => {
+  const [editOpen, setEditOpen] = createSignal(false);
+
   const moveDate = (offset: 1 | -1) => {
     let newDates = [...props.dates()];
     const index = newDates.indexOf(props.date);
@@ -69,6 +73,21 @@ export const DayActions = <DateType extends SavedDate>(
         >
           <Icon class="!text-2xl sm:!text-xl" name="arrow_downward" size="xl" />
         </Button>
+      </Show>
+      <Show when={props.editPopover}>
+        <Popover.Root
+          open={editOpen()}
+          onOpenChange={(details) => setEditOpen(details.open)}
+        >
+          <Popover.Trigger class="flex w-fit items-center gap-2 rounded px-1 py-1 text-teal-500 hover:text-teal-400">
+            <Icon class="!text-2xl sm:!text-xl" name="edit" size="xl" />
+          </Popover.Trigger>
+          <Popover.Positioner>
+            <Popover.Content class="z-10 min-w-96 rounded bg-gray-600 p-4">
+              {props.editPopover?.(() => setEditOpen(false))}
+            </Popover.Content>
+          </Popover.Positioner>
+        </Popover.Root>
       </Show>
       <Button
         class="text-teal-500 hover:text-teal-400"
