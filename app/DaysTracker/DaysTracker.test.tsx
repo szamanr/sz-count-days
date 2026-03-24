@@ -216,6 +216,7 @@ it("can toggle to display as days", async () => {
     `It's 1 month 5 days until ${formattedDate(date)}`,
   );
 
+  await userEvent.click(screen.getByRole("button", { name: "menu" }));
   await userEvent.click(screen.getByLabelText(/Display as \d{1,2} days/i));
 
   displayedDate = screen.getByTestId("dayContainer");
