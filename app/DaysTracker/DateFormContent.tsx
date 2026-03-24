@@ -87,7 +87,7 @@ export const DateFormContent: Component<Props> = (props) => {
               </div>
             )}
           </Field>
-          <Collapsible.Root>
+          <Collapsible.Root defaultOpen={!!props.initialValues?.endDate}>
             <Collapsible.Trigger class="hover:text-teal-500">
               More options
             </Collapsible.Trigger>
