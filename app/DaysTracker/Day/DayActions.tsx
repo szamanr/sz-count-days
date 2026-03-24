@@ -5,6 +5,7 @@ import { SavedDate } from "app/DaysTracker/types";
 import { Button } from "common/Button";
 import { Icon } from "common/Icon";
 import { toast } from "common/toast";
+import { twClass } from "common/twClass";
 
 type Props<DateType extends SavedDate> = {
   date: DateType;
@@ -55,7 +56,14 @@ export const DayActions = <DateType extends SavedDate>(
   };
 
   return (
-    <>
+    <div
+      class={twClass(
+        "w-40 shrink-0 justify-start sm:flex sm:justify-end",
+        editOpen()
+          ? "visible flex"
+          : "invisible hidden group-hover:visible group-hover:flex",
+      )}
+    >
       <Show when={props.reorder && props.index() > 0}>
         <Button
           class="text-teal-500 hover:text-teal-400"
@@ -103,6 +111,6 @@ export const DayActions = <DateType extends SavedDate>(
       >
         <Icon class="!text-2xl sm:!text-xl" name="close" size="xl" />
       </Button>
-    </>
+    </div>
   );
 };

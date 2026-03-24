@@ -61,33 +61,31 @@ export const Schengen = () => {
                 class="group flex flex-col-reverse space-x-1 sm:flex-row sm:items-center"
                 data-testid="dayContainer"
               >
-                <div class="invisible hidden w-40 shrink-0 justify-start group-hover:visible group-hover:flex sm:flex sm:justify-end">
-                  <DayActions
-                    index={index}
-                    date={trip}
-                    dates={trips}
-                    setDates={setTrips}
-                    editPopover={(close) => (
-                      <SchengenTripFormContent
-                        title="Edit trip"
-                        submitLabel="Save"
-                        trips={trips}
-                        excludeTrip={trip}
-                        initialValues={{
-                          name: trip.name,
-                          date: trip.date,
-                          endDate: trip.endDate,
-                        }}
-                        onSubmit={(values) => {
-                          setTrips(
-                            trips().map((t) => (t === trip ? { ...t, ...values } : t)),
-                          );
-                          close();
-                        }}
-                      />
-                    )}
-                  />
-                </div>
+                <DayActions
+                  index={index}
+                  date={trip}
+                  dates={trips}
+                  setDates={setTrips}
+                  editPopover={(close) => (
+                    <SchengenTripFormContent
+                      title="Edit trip"
+                      submitLabel="Save"
+                      trips={trips}
+                      excludeTrip={trip}
+                      initialValues={{
+                        name: trip.name,
+                        date: trip.date,
+                        endDate: trip.endDate,
+                      }}
+                      onSubmit={(values) => {
+                        setTrips(
+                          trips().map((t) => (t === trip ? { ...t, ...values } : t)),
+                        );
+                        close();
+                      }}
+                    />
+                  )}
+                />
                 <SchengenTrip
                   trip={trip}
                   otherTrips={trips}
