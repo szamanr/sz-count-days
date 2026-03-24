@@ -3,6 +3,7 @@ import { unionBy } from "lodash";
 import { createSignal, For } from "solid-js";
 import { createStore } from "solid-js/store";
 import { AddDate } from "./AddDate";
+import { DateFormContent } from "./DateFormContent";
 import { Day } from "./Day/Day";
 import { DayActions } from "./Day/DayActions";
 import { Menu } from "./Menu/Menu";
@@ -68,15 +69,32 @@ export const DaysTracker = () => {
                 class="group flex flex-col-reverse space-x-1 sm:flex-row sm:items-center"
                 data-testid="dayContainer"
               >
-                <div class="invisible hidden w-32 shrink-0 justify-start group-hover:visible group-hover:flex sm:flex sm:justify-end">
-                  <DayActions
-                    index={index}
-                    date={date}
-                    dates={dates}
-                    reorder
-                    setDates={setDates}
-                  />
-                </div>
+                <DayActions
+                  index={index}
+                  date={date}
+                  dates={dates}
+                  reorder
+                  setDates={setDates}
+                  editPopover={(close) => (
+                    <DateFormContent
+                      title="Edit date"
+                      submitLabel="Save"
+                      initialValues={{
+                        name: date.name,
+                        date: date.date,
+                        endDate: date.endDate,
+                      }}
+                      onSubmit={(values) => {
+                        setDates(
+                          dates().map((d) =>
+                            d === date ? { ...d, ...values } : d,
+                          ),
+                        );
+                        close();
+                      }}
+                    />
+                  )}
+                />
                 <Day
                   date={new UTCDate(date.date)}
                   endDate={date.endDate ? new UTCDate(date.endDate) : undefined}

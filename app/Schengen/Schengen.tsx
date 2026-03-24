@@ -6,6 +6,7 @@ import { DayActions } from "app/DaysTracker/Day/DayActions";
 import { Menu } from "app/DaysTracker/Menu/Menu";
 import { useQueryDates } from "app/DaysTracker/useQueryDates";
 import { AddSchengenTrip } from "app/Schengen/AddSchengenTrip";
+import { SchengenTripFormContent } from "app/Schengen/SchengenTripFormContent";
 import { SchengenTrip } from "app/Schengen/SchengenTrip";
 import { Summary } from "app/Schengen/Summary";
 import { SchengenDate } from "app/Schengen/types";
@@ -60,14 +61,31 @@ export const Schengen = () => {
                 class="group flex flex-col-reverse space-x-1 sm:flex-row sm:items-center"
                 data-testid="dayContainer"
               >
-                <div class="invisible hidden w-32 shrink-0 justify-start group-hover:visible group-hover:flex sm:flex sm:justify-end">
-                  <DayActions
-                    index={index}
-                    date={trip}
-                    dates={trips}
-                    setDates={setTrips}
-                  />
-                </div>
+                <DayActions
+                  index={index}
+                  date={trip}
+                  dates={trips}
+                  setDates={setTrips}
+                  editPopover={(close) => (
+                    <SchengenTripFormContent
+                      title="Edit trip"
+                      submitLabel="Save"
+                      trips={trips}
+                      excludeTrip={trip}
+                      initialValues={{
+                        name: trip.name,
+                        date: trip.date,
+                        endDate: trip.endDate,
+                      }}
+                      onSubmit={(values) => {
+                        setTrips(
+                          trips().map((t) => (t === trip ? { ...t, ...values } : t)),
+                        );
+                        close();
+                      }}
+                    />
+                  )}
+                />
                 <SchengenTrip
                   trip={trip}
                   otherTrips={trips}
